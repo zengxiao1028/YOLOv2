@@ -1,11 +1,11 @@
 from keras.models import Model
 from keras.layers import Reshape, Activation, Conv2D, Input, MaxPooling2D, BatchNormalization, Flatten, Dense, Lambda
-from keras.layers.advanced_activations import LeakyReLU
+import os
 import tensorflow as tf
 import numpy as np
 import cv2
 from keras.applications.mobilenet import MobileNet
-from keras.layers.merge import concatenate
+import shutil
 from keras.optimizers import SGD, Adam, RMSprop
 from preprocessing import BatchGenerator
 from keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoard
@@ -23,7 +23,7 @@ class YOLO(object):
         
         self.labels   = list(labels)
         self.nb_class = len(self.labels)
-        self.nb_box   = 5
+        self.nb_box   = 5       #num of boxes for each cell
         self.class_wt = np.ones(self.nb_class, dtype='float32')
         self.anchors  = anchors
 
@@ -38,9 +38,9 @@ class YOLO(object):
         self.true_boxes = Input(shape=(1, 1, 1, max_box_per_image , 4))  
 
         if architecture == 'Inception3':
-            self.feature_extractor = Inception3Feature(self.input_size)  
+            self.feature_extractor = Inception3Feature(self.input_size)
         elif architecture == 'SqueezeNet':
-            self.feature_extractor = SqueezeNetFeature(self.input_size)        
+            self.feature_extractor = SqueezeNetFeature(self.input_size)
         elif architecture == 'MobileNet':
             self.feature_extractor = MobileNetFeature(self.input_size)
         elif architecture == 'Full Yolo':
@@ -50,9 +50,9 @@ class YOLO(object):
         else:
             raise Exception('Architecture not supported! Only support Full Yolo, Tiny Yolo, MobileNet, SqueezeNet, and Inception3 at the moment!')
 
-        print self.feature_extractor.get_output_shape()    
-        self.grid_h, self.grid_w = self.feature_extractor.get_output_shape()        
-        features = self.feature_extractor.extract(input_image)            
+        print(self.feature_extractor.get_output_shape())
+        self.grid_h, self.grid_w = self.feature_extractor.get_output_shape()
+        features = self.feature_extractor.extract(input_image)
 
         # make the object detection layer
         output = Conv2D(self.nb_box * (4 + 1 + self.nb_class), 
@@ -225,7 +225,10 @@ class YOLO(object):
         return loss
 
     def load_weights(self, weight_path):
-        self.model.load_weights(weight_path)
+
+        self.feature_extractor.feature_extractor_model.load_weights(weight_path, by_name=True)
+
+        self.model.load_weights(weight_path,by_name=True)
 
     def predict(self, image):
         image = cv2.resize(image, (self.input_size, self.input_size))
@@ -309,13 +312,13 @@ class YOLO(object):
         for c in range(self.nb_class):
             sorted_indices = list(reversed(np.argsort([box.classes[c] for box in boxes])))
 
-            for i in xrange(len(sorted_indices)):
+            for i in range(len(sorted_indices)):
                 index_i = sorted_indices[i]
                 
                 if boxes[index_i].classes[c] == 0: 
                     continue
                 else:
-                    for j in xrange(i+1, len(sorted_indices)):
+                    for j in range(i+1, len(sorted_indices)):
                         index_j = sorted_indices[j]
                         
                         if self.bbox_iou(boxes[index_i], boxes[index_j]) >= nms_threshold:
@@ -351,7 +354,9 @@ class YOLO(object):
                     no_object_scale,
                     coord_scale,
                     class_scale,
+                    config_path,
                     saved_weights_name='best_weights.h5',
+                    name = 'YOLOv2',
                     debug=False):     
 
         self.batch_size = batch_size
@@ -388,11 +393,11 @@ class YOLO(object):
             'TRUE_BOX_BUFFER' : self.max_box_per_image,
         }    
 
-        train_batch = BatchGenerator(train_imgs, 
-                                     generator_config, 
+        train_batch = BatchGenerator(train_imgs,
+                                     generator_config,
                                      norm=self.feature_extractor.normalize)
-        valid_batch = BatchGenerator(valid_imgs, 
-                                     generator_config, 
+        valid_batch = BatchGenerator(valid_imgs,
+                                     generator_config,
                                      norm=self.feature_extractor.normalize,
                                      jitter=False)
 
@@ -405,21 +410,30 @@ class YOLO(object):
                            patience=3, 
                            mode='min', 
                            verbose=1)
-        checkpoint = ModelCheckpoint(saved_weights_name, 
+
+        training_save_dir = './results/'
+        os.makedirs(training_save_dir,exist_ok=True)
+        result_counter = len([log for log in os.listdir(training_save_dir) if name == log[:-2]]) + 1
+        saved_dir = os.path.join(training_save_dir,name + '_' + str(result_counter))
+        os.makedirs(saved_dir, exist_ok=True)
+        shutil.copyfile(config_path,os.path.join(saved_dir,'config.json'))
+        checkpoint = ModelCheckpoint(os.path.join(saved_dir,saved_weights_name),
                                      monitor='val_loss', 
                                      verbose=1, 
                                      save_best_only=True, 
                                      mode='min', 
                                      period=1)
-        tensorboard = TensorBoard(log_dir='~/logs/yolo/', 
-                                  histogram_freq=0, 
-                                  write_graph=True, 
+
+        tensorboard = TensorBoard(log_dir=saved_dir,
+                                  histogram_freq=0,
+                                  write_graph=True,
                                   write_images=False)
+
 
         ############################################
         # Start the training process
         ############################################        
-
+        a = train_batch.get_dateset_size() * train_times
         self.model.fit_generator(generator        = train_batch.get_generator(), 
                                  steps_per_epoch  = train_batch.get_dateset_size() * train_times, 
                                  epochs           = nb_epoch, 

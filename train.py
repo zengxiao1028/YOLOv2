@@ -1,47 +1,3 @@
-#! /usr/bin/env python
-
-"""
-This script takes in a configuration file and produces the best model. 
-The configuration file is a json file and looks like this:
-
-{
-    "model" : {
-        "architecture":         "Full Yolo",
-        "input_size":           416,
-        "anchors":              [0.57273, 0.677385, 1.87446, 2.06253, 3.33843, 5.47434, 7.88282, 3.52778, 9.77052, 9.16828],
-        "max_box_per_image":    10,        
-        "labels":               ["raccoon"]
-    },
-
-    "train": {
-        "train_image_folder":   "/home/andy/data/raccoon_dataset/images/",
-        "train_annot_folder":   "/home/andy/data/raccoon_dataset/anns/",      
-          
-        "train_times":          10,
-        "pretrained_weights":   "",
-        "batch_size":           16,
-        "learning_rate":        1e-4,
-        "nb_epoch":             50,
-        "warmup_batches":       100,
-
-        "object_scale":         5.0 ,
-        "no_object_scale":      1.0,
-        "coord_scale":          1.0,
-        "class_scale":          1.0,
-
-        "debug":                true
-    },
-
-    "valid": {
-        "valid_image_folder":   "",
-        "valid_annot_folder":   "",
-
-        "valid_times":          1
-    }
-}
-"""
-
-import argparse
 import os
 import numpy as np
 from preprocessing import parse_annotation
@@ -51,17 +7,10 @@ import json
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
-argparser = argparse.ArgumentParser(
-    description='Train and validate YOLO_v2 model on any dataset')
 
-argparser.add_argument(
-    '-c',
-    '--conf',
-    help='path to configuration file')
+def _main_():
 
-def _main_(args):
-
-    config_path = args.conf
+    config_path = './config.json'
 
     with open(config_path) as config_buffer:    
         config = json.load(config_buffer)
@@ -88,7 +37,7 @@ def _main_(args):
         train_imgs = train_imgs[:train_valid_split]
 
     if len(set(config['model']['labels']).intersection(train_labels)) == 0:
-        print "Labels to be detected are not present in the dataset! Please revise the list of labels in the config.json file!"
+        print("Labels to be detected are not present in the dataset! Please revise the list of labels in the config.json file!")
         
         return
 
@@ -107,14 +56,15 @@ def _main_(args):
     ###############################    
 
     if os.path.exists(config['train']['pretrained_weights']):
-        print "Loading pre-trained weights in", config['train']['pretrained_weights']
+        print("Loading pre-trained weights in", config['train']['pretrained_weights'])
         yolo.load_weights(config['train']['pretrained_weights'])
 
     ###############################
     #   Start the training process 
     ###############################
 
-    yolo.train(train_imgs         = train_imgs,
+    yolo.train(config_path        = config_path,
+               train_imgs         = train_imgs,
                valid_imgs         = valid_imgs,
                train_times        = config['train']['train_times'],
                valid_times        = config['valid']['valid_times'],
@@ -127,8 +77,9 @@ def _main_(args):
                coord_scale        = config['train']['coord_scale'],
                class_scale        = config['train']['class_scale'],
                saved_weights_name = config['train']['saved_weights_name'],
+               name               = config['train']['name'],
                debug              = config['train']['debug'])
 
 if __name__ == '__main__':
-    args = argparser.parse_args()
-    _main_(args)
+
+    _main_()

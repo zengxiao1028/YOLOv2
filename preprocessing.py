@@ -12,14 +12,16 @@ def parse_annotation(ann_dir, img_dir, labels=[]):
     seen_labels = set()
     
     for ann in sorted(os.listdir(ann_dir)):
+        if ann.find('DS_Store')>-1:
+            continue
         img = {'object':[]}
         
-        tree = ET.parse(ann_dir + ann)
+        tree = ET.parse(os.path.join(ann_dir,ann))
         
         for elem in tree.iter():
             if 'filename' in elem.tag:
                 all_imgs += [img]
-                img['filename'] = img_dir + elem.text
+                img['filename'] = os.path.join(img_dir,elem.text)
             if 'width' in elem.tag:
                 img['width'] = int(elem.text)
             if 'height' in elem.tag:
@@ -65,7 +67,7 @@ class BatchGenerator:
         self.jitter  = jitter
         self.norm    = norm
 
-        self.anchors = [BoundBox(0, 0, config['ANCHORS'][2*i], config['ANCHORS'][2*i+1]) for i in range(len(config['ANCHORS'])/2)]
+        self.anchors = [BoundBox(0, 0, config['ANCHORS'][2*i], config['ANCHORS'][2*i+1]) for i in range(len(config['ANCHORS'])//2)]
 
         ### augmentors by https://github.com/aleju/imgaug
         sometimes = lambda aug: iaa.Sometimes(0.5, aug)
