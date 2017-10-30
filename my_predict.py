@@ -5,7 +5,7 @@ matplotlib.use('TkAgg')
 import os
 import cv2
 import numpy as np
-from preprocessing import parse_annotation
+from preprocessing import parse_annotation_voc
 from utils import draw_boxes
 from frontend import YOLO
 import json

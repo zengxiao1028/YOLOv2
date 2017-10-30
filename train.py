@@ -1,16 +1,16 @@
 import os
 import numpy as np
-from preprocessing import parse_annotation
+from preprocessing import parse_annotation_voc
 from frontend import YOLO
 import json
-
+from sklearn.externals import joblib
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 
 def _main_():
 
-    config_path = './config.json'
+    config_path = './exp_configs/vid_config.json'
 
     with open(config_path) as config_buffer:    
         config = json.load(config_buffer)
@@ -19,22 +19,28 @@ def _main_():
     #   Parse the annotations 
     ###############################
 
-    # parse annotations of the training set
-    train_imgs, train_labels = parse_annotation(config['train']['train_annot_folder'], 
-                                                config['train']['train_image_folder'], 
-                                                config['model']['labels'])
+    # # parse annotations of the training set
+    # train_imgs, train_labels = parse_annotation_voc(config['train']['train_annot_folder'],
+    #                                                 config['train']['train_image_folder'],
+    #                                                 config['model']['labels'])
+    #
+    # # parse annotations of the validation set, if any, otherwise split the training set
+    # if os.path.exists(config['valid']['valid_annot_folder']):
+    #     valid_imgs, valid_labels = parse_annotation_voc(config['valid']['valid_annot_folder'],
+    #                                                     config['valid']['valid_image_folder'],
+    #                                                     config['model']['labels'])
+    # else:
+    #     train_valid_split = int(0.8*len(train_imgs))
+    #     np.random.shuffle(train_imgs)
+    #
+    #     valid_imgs = train_imgs[train_valid_split:]
+    #     train_imgs = train_imgs[:train_valid_split]
 
-    # parse annotations of the validation set, if any, otherwise split the training set
-    if os.path.exists(config['valid']['valid_annot_folder']):
-        valid_imgs, valid_labels = parse_annotation(config['valid']['valid_annot_folder'], 
-                                                    config['valid']['valid_image_folder'], 
-                                                    config['model']['labels'])
-    else:
-        train_valid_split = int(0.8*len(train_imgs))
-        np.random.shuffle(train_imgs)
+    print("Reading train annotations...")
+    train_imgs, train_labels = joblib.load(config['train']['train_annot_file'])
+    print("Reading val annotations...")
+    valid_imgs, valid_labels = joblib.load(config['valid']['valid_annot_file'])
 
-        valid_imgs = train_imgs[train_valid_split:]
-        train_imgs = train_imgs[:train_valid_split]
 
     if len(set(config['model']['labels']).intersection(train_labels)) == 0:
         print("Labels to be detected are not present in the dataset! Please revise the list of labels in the config.json file!")

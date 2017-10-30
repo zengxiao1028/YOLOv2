@@ -5,9 +5,11 @@ import numpy as np
 import imgaug as ia
 from imgaug import augmenters as iaa
 import xml.etree.ElementTree as ET
+import csv
+from sklearn.externals import joblib
 from utils import BoundBox, normalize, bbox_iou
 
-def parse_annotation(ann_dir, img_dir, labels=[]):
+def parse_annotation_voc(ann_dir, img_dir, labels=[]):
     all_imgs = []
     seen_labels = set()
     
@@ -49,6 +51,67 @@ def parse_annotation(ann_dir, img_dir, labels=[]):
                             if 'ymax' in dim.tag:
                                 obj['ymax'] = int(round(float(dim.text)))
                         
+    return all_imgs, seen_labels
+
+def get_word_id_dict(file_path):
+    result = dict()
+    with open(file_path) as f:
+        reader = csv.reader(f, delimiter=' ')
+        for row in reader:
+            result[row[0]] = row[2]
+    return result
+
+def parse_annotation_ILSVRC(ann_dir, img_dir,label_path):
+    label_dict = get_word_id_dict(label_path)
+    labels = sorted(list(label_dict.values()))
+    print(labels)
+    all_imgs = []
+    seen_labels = set()
+
+    for (dirpath, dirnames, ann_files) in os.walk(ann_dir):
+
+        for ann_file in ann_files:
+
+            if ann_file.find('.xml') == -1:
+                continue
+            img = {'object': []}
+
+            tree = ET.parse(os.path.join(dirpath, ann_file))
+            for elem in tree.iter():
+                if 'folder' in elem.tag:
+                    folder_path = elem.text
+                    img['folder_path'] = folder_path
+                if 'filename' in elem.tag:
+                    all_imgs += [img]
+                    img['filename'] = os.path.join(os.path.join(img_dir,folder_path), elem.text + '.JPEG')
+                if 'width' in elem.tag:
+                    img['width'] = int(elem.text)
+                if 'height' in elem.tag:
+                    img['height'] = int(elem.text)
+                if 'object' in elem.tag or 'part' in elem.tag:
+                    obj = {}
+
+                    for attr in list(elem):
+                        if 'name' in attr.tag:
+                            obj['name'] = label_dict[attr.text]
+                            seen_labels.add(obj['name'])
+
+                            if len(labels) > 0 and obj['name'] not in labels:
+                                break
+                            else:
+                                img['object'] += [obj]
+
+                        if 'bndbox' in attr.tag:
+                            for dim in list(attr):
+                                if 'xmin' in dim.tag:
+                                    obj['xmin'] = int(round(float(dim.text)))
+                                if 'ymin' in dim.tag:
+                                    obj['ymin'] = int(round(float(dim.text)))
+                                if 'xmax' in dim.tag:
+                                    obj['xmax'] = int(round(float(dim.text)))
+                                if 'ymax' in dim.tag:
+                                    obj['ymax'] = int(round(float(dim.text)))
+
     return all_imgs, seen_labels
 
 class BatchGenerator:
@@ -284,3 +347,20 @@ class BatchGenerator:
 
     def get_dateset_size(self):
         return int(np.ceil(float(len(self.images))/self.config['BATCH_SIZE']))
+
+
+if __name__ == '__main__':
+
+
+    datasets = ['train','val']
+    for dataset in datasets:
+        print(dataset)
+        ann_dir = "./dataset/imagenet/%s_ann/" % dataset
+        img_dir = "./dataset/imagenet/%s/" % dataset
+        all_imgs, seen_labels = parse_annotation_ILSVRC(ann_dir, img_dir, label_path='./dataset/imagenet/WordID')
+        joblib.dump((all_imgs,seen_labels),'./dataset/imagenet/%s_ann.pkl' % dataset,compress=0)
+
+        all_imgs, seen_labels = joblib.load('./dataset/imagenet/%s_ann.pkl' % dataset)
+
+        print(len(all_imgs))
+        print(len(seen_labels),seen_labels)

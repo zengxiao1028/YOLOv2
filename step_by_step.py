@@ -37,7 +37,7 @@ import tensorflow as tf
 from tqdm import tqdm
 import numpy as np
 import os, cv2
-from preprocessing import parse_annotation, BatchGenerator
+from preprocessing import parse_annotation_voc, BatchGenerator
 from utils import WeightReader, decode_netout, draw_boxes
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -98,7 +98,7 @@ model_config = {
 # In[19]:
 
 
-train_imgs, seen_train_labels = parse_annotation(train_annot_folder, train_image_folder, labels=LABELS)
+train_imgs, seen_train_labels = parse_annotation_voc(train_annot_folder, train_image_folder, labels=LABELS)
 ### write parsed annotations to pickle for fast retrieval next time
 #with open('train_imgs', 'wb') as fp:
 #    pickle.dump(train_imgs, fp)
@@ -108,7 +108,7 @@ train_imgs, seen_train_labels = parse_annotation(train_annot_folder, train_image
 #    train_imgs = pickle.load(fp)
 train_batch = BatchGenerator(train_imgs, model_config)
 
-valid_imgs, seen_valid_labels = parse_annotation(valid_annot_folder, valid_image_folder, labels=LABELS)
+valid_imgs, seen_valid_labels = parse_annotation_voc(valid_annot_folder, valid_image_folder, labels=LABELS)
 ### write parsed annotations to pickle for fast retrieval next time
 #with open('valid_imgs', 'wb') as fp:
 #    pickle.dump(valid_imgs, fp)
