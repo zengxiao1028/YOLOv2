@@ -225,10 +225,29 @@ class YOLO(object):
         return loss
 
     def load_weights(self, weight_path):
+        #load feature extractor model weights
+        try:
+            self.feature_extractor.feature_extractor_model.load_weights(weight_path, by_name=True)
+        except ValueError as err:
+            print("Error Loading Feature Extractor weights:",err)
+            pass
 
-        self.feature_extractor.feature_extractor_model.load_weights(weight_path, by_name=True)
+        # load feature extractor model weights
+        try:
+            self.model.load_weights(weight_path,by_name=True)
+        except ValueError as err:
+            print("Error Loading Top layer weights:",err)
+            pass
 
-        self.model.load_weights(weight_path,by_name=True)
+    def freeze_layers(self, to_layer):
+
+        # layer_names = [layer.name for layer in self.feature_extractor.feature_extractor_model.layers]
+        # for i,each in enumerate(layer_names):
+        #     print(i,each)
+        #
+        for layer in self.feature_extractor.feature_extractor_model.layers[:to_layer]:
+            layer.trainable = False
+
 
     def predict(self, image):
         image = cv2.resize(image, (self.input_size, self.input_size))

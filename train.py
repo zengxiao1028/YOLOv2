@@ -36,16 +36,15 @@ def _main_():
     #     valid_imgs = train_imgs[train_valid_split:]
     #     train_imgs = train_imgs[:train_valid_split]
 
-    print("Reading train annotations...")
-    train_imgs, train_labels = joblib.load(config['train']['train_annot_file'])
-    print("Reading val annotations...")
-    valid_imgs, valid_labels = joblib.load(config['valid']['valid_annot_file'])
+    if('train_annot_file' in config['train'].keys() and os.path.exists(config['train']['train_annot_file'])):
+        print("Reading train annotations...")
+        train_imgs, train_labels = joblib.load(config['train']['train_annot_file'])
+    if('valid_annot_file' in config['valid'].keys() and os.path.exists(config['valid']['valid_annot_file'])):
+        print("Reading val annotations...")
+        valid_imgs, valid_labels = joblib.load(config['valid']['valid_annot_file'])
 
 
-    if len(set(config['model']['labels']).intersection(train_labels)) == 0:
-        print("Labels to be detected are not present in the dataset! Please revise the list of labels in the config.json file!")
-        
-        return
+
 
     ###############################
     #   Construct the model 
@@ -64,6 +63,11 @@ def _main_():
     if os.path.exists(config['train']['pretrained_weights']):
         print("Loading pre-trained weights in", config['train']['pretrained_weights'])
         yolo.load_weights(config['train']['pretrained_weights'])
+
+    ###############################
+    #   Freeze layers
+    ###############################
+    yolo.freeze_layers(54)
 
     ###############################
     #   Start the training process 
