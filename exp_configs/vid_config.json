@@ -3,7 +3,7 @@
         "architecture":         "Full Yolo",
         "input_size":           416,
         "anchors":              [0.57273, 0.677385, 1.87446, 2.06253, 3.33843, 5.47434, 7.88282, 3.52778, 9.77052, 9.16828],
-        "max_box_per_image":    10,        
+        "max_box_per_image":    10,
         "labels":               ["airplane", "antelope", "bear", "bicycle", "bird", "bus", "car", "cattle", "dog",
           "domestic_cat", "elephant", "fox", "giant_panda", "hamster", "horse", "lion", "lizard", "monkey",
           "motorcycle", "rabbit", "red_panda", "sheep", "snake", "squirrel", "tiger", "train", "turtle",
@@ -16,9 +16,9 @@
         "train_image_folder":   "./dataset/imagenet/train/",
         "train_annot_folder":   "./dataset/imagenet/train_ann/",
         "train_annot_file"  :   "./dataset/imagenet/train_ann.pkl",
-        "train_times":          0.01,
-        "pretrained_weights":   "./pretrain_models/yolo.weights.h5",
-        "batch_size":           20,
+        "train_times":          0.02,
+        "pretrained_weights":   "/home/xiao/video_project/YOLOv2/results/YOLOv2_imagenetvid_2/full_yolo.h5",
+        "batch_size":           24,
         "learning_rate":        5e-5,
         "nb_epoch":             50,
         "warmup_batches":       250,
@@ -36,6 +36,6 @@
         "valid_image_folder":   "./dataset/imagenet/val/",
         "valid_annot_folder":   "./dataset/imagenet/val_ann/",
         "valid_annot_file"  :   "./dataset/imagenet/val_ann.pkl",
-        "valid_times":          1
+        "valid_times":          0.02
     }
 }

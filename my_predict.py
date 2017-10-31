@@ -9,10 +9,11 @@ from preprocessing import parse_annotation_voc
 from utils import draw_boxes
 from frontend import YOLO
 import json
-
+import skvideo.io
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["SDL_VIDEO_CENTERED"] = "1"
+from moviepy.editor import *
 
 
 def _main_():
@@ -42,13 +43,16 @@ def _main_():
                 input_size=416,
                 labels=LABELS,
                 max_box_per_image=10,
-                anchors=[0.57273, 0.677385, 1.87446, 2.06253, 3.33843, 5.47434, 7.88282, 3.52778, 9.77052, 9.16828])
+                anchors=ANCHORS)
 
     ###############################
     #   Load trained weights
     ###############################
     print(weights_path)
-    yolo.load_weights(weights_path)
+    yolo.load_YOLO_official_weights(weights_path)
+
+
+
 
     ###############################
     #   Predict bounding boxes
@@ -61,6 +65,27 @@ def _main_():
     print(len(boxes), 'boxes are found')
 
     cv2.imwrite(image_path[:-4] + '_detected' + image_path[-4:], image)
+
+    video_inp = '/data/xiao/imagenet/ILSVRC/Data/VID/snippets/val/ILSVRC2015_val_00005001.mp4'
+    video_out = './result.mp4'
+
+
+    videogen = skvideo.io.vreader(video_inp)
+    outputdata = []
+
+    for image in videogen:
+        boxes = yolo.predict(image)
+
+        image = draw_boxes(image, boxes, labels=LABELS)
+
+        outputdata.append(image)
+
+    skvideo.io.vwrite(video_out, np.array(outputdata).astype(np.uint8))
+
+
+
+    clip = VideoFileClip(video_out)
+    clip.preview()
 
 
 if __name__ == '__main__':

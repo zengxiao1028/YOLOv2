@@ -13,6 +13,8 @@ from utils import BoundBox
 from backend import TinyYoloFeature, FullYoloFeature, MobileNetFeature, SqueezeNetFeature, Inception3Feature
 
 class YOLO(object):
+
+
     def __init__(self, architecture,
                        input_size, 
                        labels, 
@@ -76,6 +78,17 @@ class YOLO(object):
 
         # print a summary of the whole model
         self.model.summary()
+
+    @classmethod
+    def init_from_config(cls, config):
+
+        yolo = cls(architecture=config['model']['architecture'],
+                   input_size=config['model']['input_size'],
+                   labels=config['model']['labels'],
+                   max_box_per_image=config['model']['max_box_per_image'],
+                   anchors=config['model']['anchors'])
+        yolo.config = config
+        return yolo
 
     def custom_loss(self, y_true, y_pred):
         mask_shape = tf.shape(y_true)[:4]
@@ -224,7 +237,7 @@ class YOLO(object):
         
         return loss
 
-    def load_weights(self, weight_path):
+    def load_YOLO_official_weights(self, weight_path):
         #load feature extractor model weights
         try:
             self.feature_extractor.feature_extractor_model.load_weights(weight_path, by_name=True)
@@ -239,6 +252,15 @@ class YOLO(object):
             print("Error Loading Top layer weights:",err)
             pass
 
+
+    def load_weights(self, weight_path):
+
+        # load feature extractor model weights
+
+        self.model.load_weights(weight_path,by_name=True)
+
+
+
     def freeze_layers(self, to_layer):
 
         # layer_names = [layer.name for layer in self.feature_extractor.feature_extractor_model.layers]
@@ -249,7 +271,7 @@ class YOLO(object):
             layer.trainable = False
 
 
-    def predict(self, image):
+    def predict(self, image,obj_threshold=0.3, nms_threshold=0.3):
         image = cv2.resize(image, (self.input_size, self.input_size))
         image = self.feature_extractor.normalize(image)
 
@@ -258,7 +280,7 @@ class YOLO(object):
         dummy_array = dummy_array = np.zeros((1,1,1,1,self.max_box_per_image,4))
 
         netout = self.model.predict([input_image, dummy_array])[0]
-        boxes  = self.decode_netout(netout)
+        boxes  = self.decode_netout(netout, obj_threshold, nms_threshold)
         
         return boxes
 
@@ -392,7 +414,7 @@ class YOLO(object):
         # Compile the model
         ############################################
 
-        optimizer = Adam(lr=learning_rate, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
+        optimizer = Adam(lr=learning_rate)
         self.model.compile(loss=self.custom_loss, optimizer=optimizer)
 
         ############################################
@@ -430,7 +452,7 @@ class YOLO(object):
                            mode='min', 
                            verbose=1)
 
-        training_save_dir = './results/'
+        training_save_dir = './traning_results/'
         os.makedirs(training_save_dir,exist_ok=True)
         result_counter = len([log for log in os.listdir(training_save_dir) if name == log[:-2]]) + 1
         saved_dir = os.path.join(training_save_dir,name + '_' + str(result_counter))

@@ -207,7 +207,7 @@ class MobileNetFeature(BaseFeatureExtractor):
         input_image = Input(shape=(input_size, input_size, 3))
 
         mobilenet = MobileNet(input_shape=(224,224,3), include_top=False)
-        mobilenet.load_weights(MOBILENET_FEATURE_PATH)
+        mobilenet.load_YOLO_official_weights(MOBILENET_FEATURE_PATH)
 
         x = mobilenet(input_image)
 

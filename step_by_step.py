@@ -424,7 +424,7 @@ plt.imshow(image[:,:,::-1]); plt.show()
 # In[8]:
 
 
-vYOLO.model.load_weights("weights_coco.h5")
+vYOLO.model.load_YOLO_official_weights("weights_coco.h5")
 
 dummy_array = np.zeros((1,1,1,1,TRUE_BOX_BUFFER,4))
 

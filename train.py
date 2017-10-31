@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from preprocessing import parse_annotation_voc
+from preprocessing import *
 from frontend import YOLO
 import json
 from sklearn.externals import joblib
@@ -10,7 +10,8 @@ os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 def _main_():
 
-    config_path = './exp_configs/vid_config.json'
+    config_path = './exp_configs/bloodcell_config.json'
+    parse_annotation = parse_annotation_bloodcell
 
     with open(config_path) as config_buffer:    
         config = json.load(config_buffer)
@@ -20,28 +21,29 @@ def _main_():
     ###############################
 
     # # parse annotations of the training set
-    # train_imgs, train_labels = parse_annotation_voc(config['train']['train_annot_folder'],
-    #                                                 config['train']['train_image_folder'],
-    #                                                 config['model']['labels'])
-    #
-    # # parse annotations of the validation set, if any, otherwise split the training set
-    # if os.path.exists(config['valid']['valid_annot_folder']):
-    #     valid_imgs, valid_labels = parse_annotation_voc(config['valid']['valid_annot_folder'],
-    #                                                     config['valid']['valid_image_folder'],
-    #                                                     config['model']['labels'])
-    # else:
-    #     train_valid_split = int(0.8*len(train_imgs))
-    #     np.random.shuffle(train_imgs)
-    #
-    #     valid_imgs = train_imgs[train_valid_split:]
-    #     train_imgs = train_imgs[:train_valid_split]
-
     if('train_annot_file' in config['train'].keys() and os.path.exists(config['train']['train_annot_file'])):
         print("Reading train annotations...")
         train_imgs, train_labels = joblib.load(config['train']['train_annot_file'])
-    if('valid_annot_file' in config['valid'].keys() and os.path.exists(config['valid']['valid_annot_file'])):
+    else:
+        train_imgs, train_labels = parse_annotation(config['train']['train_annot_folder'],
+                                                        config['train']['train_image_folder'],
+                                                        config['model']['labels'])
+
+
+    # parse annotations of the validation set, if any, otherwise split the training set
+    if ('valid_annot_file' in config['valid'].keys() and os.path.exists(config['valid']['valid_annot_file'])):
         print("Reading val annotations...")
         valid_imgs, valid_labels = joblib.load(config['valid']['valid_annot_file'])
+    elif os.path.exists(config['valid']['valid_annot_folder']):
+        valid_imgs, valid_labels = parse_annotation(config['valid']['valid_annot_folder'],
+                                                        config['valid']['valid_image_folder'],
+                                                        config['model']['labels'])
+    else:
+        train_valid_split = int(0.8*len(train_imgs))
+        np.random.shuffle(train_imgs)
+
+        valid_imgs = train_imgs[train_valid_split:]
+        train_imgs = train_imgs[:train_valid_split]
 
 
 
@@ -49,12 +51,7 @@ def _main_():
     ###############################
     #   Construct the model 
     ###############################
-
-    yolo = YOLO(architecture        = config['model']['architecture'],
-                input_size          = config['model']['input_size'], 
-                labels              = config['model']['labels'], 
-                max_box_per_image   = config['model']['max_box_per_image'],
-                anchors             = config['model']['anchors'])
+    yolo = YOLO.init_from_config(config)
 
     ###############################
     #   Load the pretrained weights (if any) 
@@ -62,12 +59,12 @@ def _main_():
 
     if os.path.exists(config['train']['pretrained_weights']):
         print("Loading pre-trained weights in", config['train']['pretrained_weights'])
-        yolo.load_weights(config['train']['pretrained_weights'])
+        yolo.load_YOLO_official_weights(config['train']['pretrained_weights'])
 
     ###############################
     #   Freeze layers
     ###############################
-    yolo.freeze_layers(54)
+    #yolo.freeze_layers(54)
 
     ###############################
     #   Start the training process 

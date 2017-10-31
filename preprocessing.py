@@ -53,6 +53,51 @@ def parse_annotation_voc(ann_dir, img_dir, labels=[]):
                         
     return all_imgs, seen_labels
 
+
+def parse_annotation_bloodcell(ann_dir, img_dir, labels=[]):
+    all_imgs = []
+    seen_labels = set()
+
+    for ann in sorted(os.listdir(ann_dir)):
+        if ann.find('DS_Store') > -1:
+            continue
+        img = {'object': []}
+
+        tree = ET.parse(os.path.join(ann_dir, ann))
+        for elem in tree.iter():
+            if 'filename' in elem.tag:
+                all_imgs += [img]
+                img['filename'] = os.path.join(img_dir, elem.text) + '.jpg'
+            if 'width' in elem.tag:
+                img['width'] = int(elem.text)
+            if 'height' in elem.tag:
+                img['height'] = int(elem.text)
+            if 'object' in elem.tag or 'part' in elem.tag:
+                obj = {}
+
+                for attr in list(elem):
+                    if 'name' in attr.tag:
+                        obj['name'] = attr.text
+                        seen_labels.add(obj['name'])
+
+                        if len(labels) > 0 and obj['name'] not in labels:
+                            break
+                        else:
+                            img['object'] += [obj]
+
+                    if 'bndbox' in attr.tag:
+                        for dim in list(attr):
+                            if 'xmin' in dim.tag:
+                                obj['xmin'] = int(round(float(dim.text)))
+                            if 'ymin' in dim.tag:
+                                obj['ymin'] = int(round(float(dim.text)))
+                            if 'xmax' in dim.tag:
+                                obj['xmax'] = int(round(float(dim.text)))
+                            if 'ymax' in dim.tag:
+                                obj['ymax'] = int(round(float(dim.text)))
+
+    return all_imgs, seen_labels
+
 def get_word_id_dict(file_path):
     result = dict()
     with open(file_path) as f:
