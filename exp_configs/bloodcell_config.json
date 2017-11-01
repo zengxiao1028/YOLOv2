@@ -3,7 +3,7 @@
         "architecture":         "Full Yolo",
         "input_size":           416,
         "anchors":              [0.57273, 0.677385, 1.87446, 2.06253, 3.33843, 5.47434, 7.88282, 3.52778, 9.77052, 9.16828],
-        "max_box_per_image":    10,
+        "max_box_per_image":    50,
         "labels":              ["RBC"]
 
     },
@@ -15,10 +15,10 @@
         "train_annot_file"  :   "",
         "train_times":          5,
         "pretrained_weights":   "./pretrain_models/yolo.weights.h5",
-        "batch_size":           24,
-        "learning_rate":        5e-5,
+        "batch_size":           16,
+        "learning_rate":        1e-4,
         "nb_epoch":             50,
-        "warmup_batches":       250,
+        "warmup_batches":       100,
 
         "object_scale":         5.0,
         "no_object_scale":      1.0,

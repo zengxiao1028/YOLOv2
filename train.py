@@ -10,8 +10,8 @@ os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 def _main_():
 
-    config_path = './exp_configs/bloodcell_config.json'
-    parse_annotation = parse_annotation_bloodcell
+    config_path = './exp_configs/vid_config.json'
+    parse_annotation = parse_annotation_ILSVRC
 
     with open(config_path) as config_buffer:    
         config = json.load(config_buffer)

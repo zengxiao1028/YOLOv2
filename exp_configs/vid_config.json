@@ -19,7 +19,7 @@
         "train_times":          0.02,
         "pretrained_weights":   "/home/xiao/video_project/YOLOv2/results/YOLOv2_imagenetvid_2/full_yolo.h5",
         "batch_size":           24,
-        "learning_rate":        5e-5,
+        "learning_rate":        1e-4,
         "nb_epoch":             50,
         "warmup_batches":       250,
 
