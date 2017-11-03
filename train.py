@@ -5,8 +5,7 @@ from frontend import YOLO
 import json
 from sklearn.externals import joblib
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
-
+#os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 def _main_():
 
@@ -87,7 +86,8 @@ def _main_():
                class_scale        = config['train']['class_scale'],
                saved_weights_name = config['train']['saved_weights_name'],
                name               = config['train']['name'],
-               debug              = config['train']['debug'])
+               debug              = config['train']['debug'],
+               nb_gpus            = 3 )
 
 if __name__ == '__main__':
 

@@ -1,6 +1,6 @@
 {
     "model" : {
-        "architecture":         "Inception3",
+        "architecture":         "Full Yolo",
         "input_size":           416,
         "anchors":              [0.57273, 0.677385, 1.87446, 2.06253, 3.33843, 5.47434, 7.88282, 3.52778, 9.77052, 9.16828],
         "max_box_per_image":    5,
@@ -12,22 +12,23 @@
     },
 
     "train": {
-        "name":                 "InceptionV3_imagenetvid",
+        "name":                 "YOLOv2_imagenetvid",
         "train_image_folder":   "./dataset/imagenet/train/",
         "train_annot_folder":   "./dataset/imagenet/train_ann/",
         "train_annot_file"  :   "./dataset/imagenet/train_ann.pkl",
         "train_times":          0.05,
-        "pretrained_weights":   "",
-        "batch_size":           20,
-        "learning_rate":        1e-4,
+        "pretrained_weights":   "/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_imagenetvid_3/full_yolo.h5",
+        "batch_size":           60,
+        "learning_rate":        5e-5,
         "nb_epoch":             50,
         "warmup_batches":       0,
+
         "object_scale":         5.0,
         "no_object_scale":      1.0,
         "coord_scale":          1.0,
         "class_scale":          1.0,
 
-        "saved_weights_name":   "InceptionV3.h5",
+        "saved_weights_name":   "full_yolo.h5",
         "debug":                true
     },
 
@@ -35,7 +36,7 @@
         "valid_image_folder":   "./dataset/imagenet/val/",
         "valid_annot_folder":   "./dataset/imagenet/val_ann/",
         "valid_annot_file"  :   "./dataset/imagenet/val_ann.pkl",
-        "valid_times":          0.05,
+        "valid_times":          0.01,
         "obj_threshold"     :   0.3,
         "nms_threshold"     :   0.3
     }

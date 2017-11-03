@@ -11,7 +11,7 @@ from preprocessing import BatchGenerator
 from keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoard
 from utils import BoundBox
 from backend import TinyYoloFeature, FullYoloFeature, MobileNetFeature, SqueezeNetFeature, Inception3Feature
-
+from keras.utils import multi_gpu_model
 class YOLO(object):
 
 
@@ -400,7 +400,8 @@ class YOLO(object):
                     config_path,
                     saved_weights_name='best_weights.h5',
                     name = 'YOLOv2',
-                    debug=False):     
+                    debug=False,
+                    nb_gpus=1):
 
         self.batch_size = batch_size
         self.warmup_bs  = warmup_bs 
@@ -415,6 +416,12 @@ class YOLO(object):
         ############################################
         # Compile the model
         ############################################
+
+        if nb_gpus>1:
+            print("Using %d GPUs For Training" % nb_gpus)
+            parallel_model = multi_gpu_model(self.model, nb_gpus)
+            parallel_model.callback_model = self.model
+            self.model = parallel_model
 
         optimizer = Adam(lr=learning_rate, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
         self.model.compile(loss=self.custom_loss, optimizer=optimizer)
@@ -482,5 +489,5 @@ class YOLO(object):
                                  verbose          = 1,
                                  validation_data  = valid_batch.get_generator(),
                                  validation_steps = valid_batch.get_dateset_size() * valid_times,
-                                 callbacks        = [early_stop, checkpoint, tensorboard], 
+                                 callbacks        = [checkpoint, tensorboard],
                                  max_queue_size   = 64)

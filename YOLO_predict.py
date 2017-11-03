@@ -13,7 +13,7 @@ from moviepy.editor import *
 
 def _main_():
 
-    training_result_folder = ''
+    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/InceptionV3_imagenetvid_1'
     config_path = os.path.join(training_result_folder, 'config.json')
     with open(config_path) as config_buffer:
         config = json.load(config_buffer)
@@ -72,7 +72,7 @@ def _main_():
 
     for image in videogen:
 
-        boxes = yolo.predict(image,0.5,0.3)
+        boxes = yolo.predict(image,config["valid"]["obj_threshold"],config["valid"]["nms_threshold"])
 
         image = draw_boxes(image, boxes, labels=config['model']['labels'])
 
