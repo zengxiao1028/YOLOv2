@@ -160,6 +160,7 @@ class FullYoloFeature(BaseFeatureExtractor):
         x = LeakyReLU(alpha=0.1)(x)
 
         self.feature_extractor_model = Model(input_image, x)
+        self.feature_extractor_model.summary()
         #self.feature_extractor.load_weights(FULL_YOLO_FEATURE_PATH)
 
     def normalize(self, image):
@@ -285,7 +286,6 @@ class Inception3Feature(BaseFeatureExtractor):
         input_image = Input(shape=(input_size, input_size, 3))
 
         inception = InceptionV3(input_shape=(input_size,input_size,3), include_top=False)
-        #mobilenet.load_weights(MOBILENET_FEATURE_PATH)
 
         x = inception(input_image)
 

@@ -9,6 +9,7 @@ import csv
 from sklearn.externals import joblib
 from utils import BoundBox, normalize, bbox_iou
 
+
 def parse_annotation_voc(ann_dir, img_dir, labels=[]):
     all_imgs = []
     seen_labels = set()
@@ -309,18 +310,17 @@ class BatchGenerator:
                             true_box_index = true_box_index % self.config['TRUE_BOX_BUFFER']
                                 
                 # assign input image to x_batch
-                if self.norm != None: 
+                if self.norm != None:
                     x_batch[batch_count] = self.norm(img)
                 else:
                     # plot image and bounding boxes for sanity check
-                    for obj in all_objs:
-                        if obj['xmax'] > obj['xmin'] and obj['ymax'] > obj['ymin']:
-                            cv2.rectangle(img[:,:,::-1], (obj['xmin'],obj['ymin']), (obj['xmax'],obj['ymax']), (255,0,0), 3)
-                            cv2.putText(img[:,:,::-1], obj['name'], 
-                                        (obj['xmin']+2, obj['ymin']+12), 
-                                        0, 1.2e-3 * img.shape[0], 
-                                        (0,255,0), 2)
-                            
+                    # for obj in all_objs:
+                    #     if obj['xmax'] > obj['xmin'] and obj['ymax'] > obj['ymin']:
+                    #         cv2.rectangle(img[:,:,::-1], (obj['xmin'],obj['ymin']), (obj['xmax'],obj['ymax']), (255,0,0), 3)
+                    #         cv2.putText(img[:,:,::-1], obj['name'],
+                    #                     (obj['xmin']+2, obj['ymin']+12),
+                    #                     0, 1.2e-3 * img.shape[0],
+                    #                     (0,255,0), 2)
                     x_batch[batch_count] = img
 
                 # increase instance counter in current batch

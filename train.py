@@ -11,7 +11,9 @@ os.environ["CUDA_VISIBLE_DEVICES"]="0"
 def _main_():
 
     config_path = './exp_configs/vid_config.json'
-    parse_annotation = parse_annotation_ILSVRC
+    parse_annotation = parse_annotation_voc
+
+
 
     with open(config_path) as config_buffer:    
         config = json.load(config_buffer)
@@ -59,7 +61,7 @@ def _main_():
 
     if os.path.exists(config['train']['pretrained_weights']):
         print("Loading pre-trained weights in", config['train']['pretrained_weights'])
-        yolo.load_YOLO_official_weights(config['train']['pretrained_weights'])
+        yolo.load_weights(config['train']['pretrained_weights'])
 
     ###############################
     #   Freeze layers

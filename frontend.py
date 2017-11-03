@@ -19,13 +19,14 @@ class YOLO(object):
                        input_size, 
                        labels, 
                        max_box_per_image,
-                       anchors):
+                       anchors,
+                        obj_threshold):
 
         self.input_size = input_size
-        
+        self.obj_threshold = obj_threshold
         self.labels   = list(labels)
         self.nb_class = len(self.labels)
-        self.nb_box   = 5       #num of boxes for each cell
+        self.nb_box   = max_box_per_image       #num of boxes for each cell
         self.class_wt = np.ones(self.nb_class, dtype='float32')
         self.anchors  = anchors
 
@@ -86,8 +87,9 @@ class YOLO(object):
                    input_size=config['model']['input_size'],
                    labels=config['model']['labels'],
                    max_box_per_image=config['model']['max_box_per_image'],
-                   anchors=config['model']['anchors'])
-        yolo.config = config
+                   anchors=config['model']['anchors'],
+                   obj_threshold=config["valid"]["obj_threshold"])
+
         return yolo
 
     def custom_loss(self, y_true, y_pred):
@@ -228,7 +230,7 @@ class YOLO(object):
         
         if self.debug:
             nb_true_box = tf.reduce_sum(y_true[..., 4])
-            nb_pred_box = tf.reduce_sum(tf.to_float(true_box_conf > 0.5) * tf.to_float(pred_box_conf > 0.3))
+            nb_pred_box = tf.reduce_sum(tf.to_float(true_box_conf > 0.5) * tf.to_float(pred_box_conf > self.obj_threshold))
             
             current_recall = nb_pred_box/(nb_true_box + 1e-6)
             total_recall = tf.assign_add(total_recall, current_recall) 
@@ -414,7 +416,7 @@ class YOLO(object):
         # Compile the model
         ############################################
 
-        optimizer = Adam(lr=learning_rate)
+        optimizer = Adam(lr=learning_rate, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
         self.model.compile(loss=self.custom_loss, optimizer=optimizer)
 
         ############################################
@@ -473,8 +475,7 @@ class YOLO(object):
 
         ############################################
         # Start the training process
-        ############################################        
-        a = train_batch.get_dateset_size() * train_times
+        ############################################
         self.model.fit_generator(generator        = train_batch.get_generator(), 
                                  steps_per_epoch  = train_batch.get_dateset_size() * train_times, 
                                  epochs           = nb_epoch, 
@@ -482,4 +483,4 @@ class YOLO(object):
                                  validation_data  = valid_batch.get_generator(),
                                  validation_steps = valid_batch.get_dateset_size() * valid_times,
                                  callbacks        = [early_stop, checkpoint, tensorboard], 
-                                 max_queue_size   = 8)
+                                 max_queue_size   = 64)

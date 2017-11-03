@@ -13,11 +13,15 @@ from moviepy.editor import *
 
 def _main_():
 
-
-    config_path = './exp_configs/bloodcell_config.json'
-    validation_model_path = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_bloodcell_3/full_yolo.h5'
+    training_result_folder = ''
+    config_path = os.path.join(training_result_folder, 'config.json')
     with open(config_path) as config_buffer:
         config = json.load(config_buffer)
+
+    validation_model_path = os.path.join(training_result_folder,config['train']['saved_weights_name'] )
+
+
+
 
 
     ###############################
@@ -34,41 +38,50 @@ def _main_():
         print("Loading pre-trained weights in", validation_model_path)
         yolo.load_weights(validation_model_path)
 
-    image_path = '/home/xiao/video_project/YOLOv2/dataset/bloodcell/JPEGImages/BloodImage_00351.jpg'
-    image = cv2.imread(image_path)
-    boxes = yolo.predict(image,0.5,0.3)
-    image = draw_boxes(image, boxes, config['model']['labels'])
-
-    print(len(boxes), 'boxes are found')
-
-    cv2.imwrite('./result.jpg', image)
 
 
 
+    ###############################
+    #  Predict image
+    ###############################
+    # image_path = '/home/xiao/video_project/YOLOv2/dataset/bloodcell/JPEGImages/BloodImage_00351.jpg'
+    # image = cv2.imread(image_path)
+    # boxes = yolo.predict(image,0.5,0.3)
+    # image = draw_boxes(image, boxes, config['model']['labels'])
+    #
+    # print(len(boxes), 'boxes are found')
+    #
+    # cv2.imwrite('./tmp/result.jpg', image)
 
-    # video_inp = '/data/xiao/imagenet/ILSVRC/Data/VID/snippets/train/ILSVRC2015_VID_train_0000/ILSVRC2015_train_00010001.mp4'
-    # video_out = './result.mp4'
-    #
-    # metadata = skvideo.io.ffprobe(video_inp)
-    # video_height = metadata["video"]["@height"]
-    # video_width = metadata["video"]["@width"]
-    # num_frames = metadata["video"]["@nb_frames"]
-    #
-    # videogen = skvideo.io.vreader(video_inp)
-    # outputdata = []
-    #
-    # for image in videogen:
-    #
-    #     boxes = yolo.predict(image,0.5,0.3)
-    #
-    #     image = draw_boxes(image, boxes, labels=config['model']['labels'])
-    #
-    #     outputdata.append(image)
-    #
-    #
-    # skvideo.io.vwrite(video_out, np.array(outputdata).astype(np.uint8))
-    # clip = VideoFileClip(video_out)
-    # clip.preview()
+
+
+    ###############################
+    #   Predict video
+    ###############################
+
+    video_inp = '/data/xiao/imagenet/ILSVRC/Data/VID/snippets/test/ILSVRC2015_test_00014002.mp4'
+    video_out = './tmp/result.mp4'
+
+    metadata = skvideo.io.ffprobe(video_inp)
+    video_height = metadata["video"]["@height"]
+    video_width = metadata["video"]["@width"]
+    num_frames = metadata["video"]["@nb_frames"]
+
+    videogen = skvideo.io.vreader(video_inp)
+    outputdata = []
+
+    for image in videogen:
+
+        boxes = yolo.predict(image,0.5,0.3)
+
+        image = draw_boxes(image, boxes, labels=config['model']['labels'])
+
+        outputdata.append(image)
+
+
+    skvideo.io.vwrite(video_out, np.array(outputdata).astype(np.uint8))
+    clip = VideoFileClip(video_out)
+    clip.preview()
 
 
 if __name__ == '__main__':

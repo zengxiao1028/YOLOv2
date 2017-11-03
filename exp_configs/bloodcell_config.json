@@ -26,7 +26,7 @@
         "class_scale":          1.0,
 
         "saved_weights_name":   "full_yolo.h5",
-        "debug":                false
+        "debug":                true
     },
 
     "valid": {

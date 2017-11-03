@@ -8,11 +8,14 @@ import numpy as np
 from preprocessing import parse_annotation_voc
 from utils import draw_boxes
 from frontend import YOLO
-import json
+
 import skvideo.io
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
 os.environ["SDL_VIDEO_CENTERED"] = "1"
+from skimage import io
+from matplotlib import pyplot as plt
+io.use_plugin('matplotlib')
 from moviepy.editor import *
 
 
@@ -66,26 +69,60 @@ def _main_():
 
     cv2.imwrite(image_path[:-4] + '_detected' + image_path[-4:], image)
 
-    video_inp = '/data/xiao/imagenet/ILSVRC/Data/VID/snippets/val/ILSVRC2015_val_00005001.mp4'
-    video_out = './result.mp4'
+    #zebra
+    # video_inp = '/data/xiao/imagenet/ILSVRC/Data/VID/snippets/val/ILSVRC2015_val_00005001.mp4'
+    # videogen = skvideo.io.vreader(video_inp)
+    # outputdata = []
+    # for image in videogen:
+    #     boxes = yolo.predict(image)
+    #
+    #     image = draw_boxes(image, boxes, labels=LABELS)
+    #
+    #     cv2.imshow('image', image)
+    #     cv2.waitKey(1)
+    #     outputdata.append(image)
 
 
-    videogen = skvideo.io.vreader(video_inp)
-    outputdata = []
+    #airplane
+    # video_inp = '/data/xiao/imagenet/ILSVRC/Data/VID/snippets/val/ILSVRC2015_val_00007011.mp4'
+    # videogen = skvideo.io.vreader(video_inp)
+    # outputdata = []
+    # for image in videogen:
+    #
+    #     boxes = yolo.predict(image)
+    #
+    #     image = draw_boxes(image, boxes, labels=LABELS)
+    #
+    #     cv2.imshow('image',image)
+    #     cv2.waitKey(1)
+    #     outputdata.append(image)
+    #
+    # # car
+    # video_inp = '/data/xiao/imagenet/ILSVRC/Data/VID/snippets/val/ILSVRC2015_val_00143003.mp4'
+    # videogen = skvideo.io.vreader(video_inp)
+    # outputdata = []
+    # for image in videogen:
+    #     boxes = yolo.predict(image)
+    #
+    #     image = draw_boxes(image, boxes, labels=LABELS)
+    #
+    #     cv2.imshow('image', image)
+    #     cv2.waitKey(1)
+    #     outputdata.append(image)
+    #
+    # # car
+    # video_inp = '/data/xiao/imagenet/ILSVRC/Data/VID/snippets/val/ILSVRC2015_val_00041008.mp4'
+    # videogen = skvideo.io.vreader(video_inp)
+    # outputdata = []
+    # for image in videogen:
+    #     boxes = yolo.predict(image)
+    #
+    #     image = draw_boxes(image, boxes, labels=LABELS)
+    #
+    #     cv2.imshow('image', image)
+    #     cv2.waitKey(1)
+    #     outputdata.append(image)
 
-    for image in videogen:
-        boxes = yolo.predict(image)
-
-        image = draw_boxes(image, boxes, labels=LABELS)
-
-        outputdata.append(image)
-
-    skvideo.io.vwrite(video_out, np.array(outputdata).astype(np.uint8))
-
-
-
-    clip = VideoFileClip(video_out)
-    clip.preview()
 
 
 if __name__ == '__main__':
