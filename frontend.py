@@ -424,7 +424,7 @@ class YOLO(object):
             self.model = parallel_model
 
         optimizer = Adam(lr=learning_rate, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
-        self.model.compile(loss=self.custom_loss, optimizer=optimizer)
+        self.model.compile(loss=self.custom_loss, optimizer=optimizer,metrics=[self.custom_loss])
 
         ############################################
         # Make train and validation generators
