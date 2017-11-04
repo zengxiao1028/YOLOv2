@@ -12,6 +12,7 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoard
 from utils import BoundBox
 from backend import TinyYoloFeature, FullYoloFeature, MobileNetFeature, SqueezeNetFeature, Inception3Feature
 from keras.utils import multi_gpu_model
+from keras import regularizers
 class YOLO(object):
 
 
@@ -20,7 +21,8 @@ class YOLO(object):
                        labels, 
                        max_box_per_image,
                        anchors,
-                       obj_threshold=0.3):
+                       obj_threshold=0.3,
+                       kernel_regularizer = None):
 
         self.input_size = input_size
         self.obj_threshold = obj_threshold
@@ -35,7 +37,6 @@ class YOLO(object):
         ##########################
         # Make the model
         ##########################
-
         # make the feature extractor layers
         input_image     = Input(shape=(self.input_size, self.input_size, 3))
         self.true_boxes = Input(shape=(1, 1, 1, max_box_per_image , 4))  
@@ -47,7 +48,7 @@ class YOLO(object):
         elif architecture == 'MobileNet':
             self.feature_extractor = MobileNetFeature(self.input_size)
         elif architecture == 'Full Yolo':
-            self.feature_extractor = FullYoloFeature(self.input_size)
+            self.feature_extractor = FullYoloFeature(self.input_size,kr=kernel_regularizer)
         elif architecture == 'Tiny Yolo':
             self.feature_extractor = TinyYoloFeature(self.input_size)
         else:
@@ -62,7 +63,7 @@ class YOLO(object):
                         (1,1), strides=(1,1), 
                         padding='same', 
                         name='conv_23', 
-                        kernel_initializer='lecun_normal')(features)
+                        kernel_initializer='lecun_normal',kernel_regularizer=kernel_regularizer)(features)
         output = Reshape((self.grid_h, self.grid_w, self.nb_box, 4 + 1 + self.nb_class))(output)
         output = Lambda(lambda args: args[0])([output, self.true_boxes])
 
@@ -88,7 +89,8 @@ class YOLO(object):
                    labels=config['model']['labels'],
                    max_box_per_image=config['model']['max_box_per_image'],
                    anchors=config['model']['anchors'],
-                   obj_threshold=config["valid"]["obj_threshold"])
+                   obj_threshold=config["valid"]["obj_threshold"],
+                   kernel_regularizer=config['train'] if 'kernel_regularization' in config['train'].keys() else None)
 
         return yolo
 
