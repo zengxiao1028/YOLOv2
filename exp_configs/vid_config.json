@@ -22,7 +22,7 @@
         "learning_rate":        5e-5,
         "nb_epoch":             50,
         "warmup_batches":       0,
-
+        config['train'] if 'kernel_regularization' in config['train'].keys() else None
         "object_scale":         5.0,
         "no_object_scale":      1.0,
         "coord_scale":          1.0,

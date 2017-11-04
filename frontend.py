@@ -22,7 +22,7 @@ class YOLO(object):
                        max_box_per_image,
                        anchors,
                        obj_threshold=0.3,
-                       kernel_regularizer = None):
+                       weight_decay = None):
 
         self.input_size = input_size
         self.obj_threshold = obj_threshold
@@ -33,6 +33,10 @@ class YOLO(object):
         self.anchors  = anchors
 
         self.max_box_per_image = max_box_per_image
+
+
+        #### weight_decay
+        kr = None if weight_decay is None else regularizers.l2(weight_decay)
 
         ##########################
         # Make the model
@@ -48,7 +52,7 @@ class YOLO(object):
         elif architecture == 'MobileNet':
             self.feature_extractor = MobileNetFeature(self.input_size)
         elif architecture == 'Full Yolo':
-            self.feature_extractor = FullYoloFeature(self.input_size,kr=kernel_regularizer)
+            self.feature_extractor = FullYoloFeature(self.input_size, kernel_regularizer=kr)
         elif architecture == 'Tiny Yolo':
             self.feature_extractor = TinyYoloFeature(self.input_size)
         else:
@@ -63,7 +67,7 @@ class YOLO(object):
                         (1,1), strides=(1,1), 
                         padding='same', 
                         name='conv_23', 
-                        kernel_initializer='lecun_normal',kernel_regularizer=kernel_regularizer)(features)
+                        kernel_initializer='lecun_normal',kernel_regularizer=kr)(features)
         output = Reshape((self.grid_h, self.grid_w, self.nb_box, 4 + 1 + self.nb_class))(output)
         output = Lambda(lambda args: args[0])([output, self.true_boxes])
 
@@ -90,7 +94,7 @@ class YOLO(object):
                    max_box_per_image=config['model']['max_box_per_image'],
                    anchors=config['model']['anchors'],
                    obj_threshold=config["valid"]["obj_threshold"],
-                   kernel_regularizer=config['train'] if 'kernel_regularization' in config['train'].keys() else None)
+                   weight_decay=config['train']['weight_decay'] if 'weight_decay' in config['train'].keys() else None)
 
         return yolo
 
