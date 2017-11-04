@@ -45,7 +45,7 @@ def _main_():
     yolo = YOLO(architecture='Full Yolo',
                 input_size=416,
                 labels=LABELS,
-                max_box_per_image=10,
+                max_box_per_image=5,
                 anchors=ANCHORS)
 
     ###############################

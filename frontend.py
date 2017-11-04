@@ -20,7 +20,7 @@ class YOLO(object):
                        labels, 
                        max_box_per_image,
                        anchors,
-                        obj_threshold):
+                       obj_threshold=0.3):
 
         self.input_size = input_size
         self.obj_threshold = obj_threshold
@@ -327,9 +327,9 @@ class YOLO(object):
         boxes = []
         
         # decode the output by the network
-        netout[..., 4]  = self.sigmoid(netout[..., 4])
-        netout[..., 5:] = netout[..., 4][..., np.newaxis] * self.softmax(netout[..., 5:])
-        netout[..., 5:] *= netout[..., 5:] > obj_threshold
+        netout[..., 4]  = self.sigmoid(netout[..., 4]) # squash confidence into [0, 1]
+        netout[..., 5:] = netout[..., 4][..., np.newaxis] * self.softmax(netout[..., 5:]) # confidence * prediction
+        netout[..., 5:] *= netout[..., 5:] > obj_threshold # t
         
         for row in range(grid_h):
             for col in range(grid_w):
