@@ -60,8 +60,8 @@ def _main_():
 
     if os.path.exists(config['train']['pretrained_weights']):
         print("Loading pre-trained weights in", config['train']['pretrained_weights'])
-        #yolo.load_weights(config['train']['pretrained_weights'])
-        yolo.load_YOLO_official_weights(config['train']['pretrained_weights'])
+        yolo.load_weights(config['train']['pretrained_weights'])
+        #yolo.load_YOLO_official_weights(config['train']['pretrained_weights'])
     ###############################
     #   Freeze layers
     ###############################
