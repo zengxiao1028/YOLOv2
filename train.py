@@ -47,7 +47,7 @@ def _main_():
         train_imgs = train_imgs[:train_valid_split]
 
     config['model']['labels'] = sorted(list(train_labels))
-
+    print(config['model']['labels'])
 
     ###############################
     #   Construct the model 

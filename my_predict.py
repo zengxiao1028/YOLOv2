@@ -32,8 +32,8 @@ def _main_():
               'teddy bear', 'hair drier', 'toothbrush']
     ANCHORS = [0.57273, 0.677385, 1.87446, 2.06253, 3.33843, 5.47434, 7.88282, 3.52778, 9.77052, 9.16828]
 
-    weights_path = './pretrain_models/yolo.weights.h5'
-    image_path = './images/person.jpg'
+
+
 
     #with open(config_path) as config_buffer:
     #    config = json.load(config_buffer)
@@ -51,6 +51,7 @@ def _main_():
     ###############################
     #   Load trained weights
     ###############################
+    weights_path = './pretrain_models/yolo.weights.h5'
     print(weights_path)
     yolo.load_YOLO_official_weights(weights_path)
 
@@ -60,7 +61,7 @@ def _main_():
     ###############################
     #   Predict bounding boxes
     ###############################
-
+    image_path = './images/person.jpg'
     image = cv2.imread(image_path)
     boxes = yolo.predict(image)
     image = draw_boxes(image, boxes, LABELS)
