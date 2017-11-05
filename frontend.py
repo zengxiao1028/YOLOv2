@@ -473,11 +473,17 @@ class YOLO(object):
         saved_dir = os.path.join(training_save_dir,name + '_' + str(result_counter))
         os.makedirs(saved_dir, exist_ok=True)
         shutil.copyfile(config_path,os.path.join(saved_dir,'config.json'))
-        checkpoint = ModelCheckpoint(os.path.join(saved_dir,saved_weights_name),
+        best_checkpoint = ModelCheckpoint(os.path.join(saved_dir,'best_' + saved_weights_name),
                                      monitor='val_loss', 
                                      verbose=1, 
                                      save_best_only=True, 
                                      mode='min', 
+                                     period=1)
+        checkpoint = ModelCheckpoint(os.path.join(saved_dir, saved_weights_name),
+                                     monitor='val_loss',
+                                     verbose=1,
+                                     save_best_only=False,
+                                     mode='min',
                                      period=1)
 
         tensorboard = TensorBoard(log_dir=saved_dir,
@@ -495,5 +501,5 @@ class YOLO(object):
                                  verbose          = 1,
                                  validation_data  = valid_batch.get_generator(),
                                  validation_steps = valid_batch.get_dateset_size() * valid_times,
-                                 callbacks        = [checkpoint, tensorboard],
+                                 callbacks        = [best_checkpoint, checkpoint, tensorboard],
                                  max_queue_size   = 64)
