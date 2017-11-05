@@ -36,7 +36,7 @@ class YOLO(object):
 
 
         #### weight_decay
-        kr = None if weight_decay is None else regularizers.l2(weight_decay)
+        kr = None if weight_decay is None or weight_decay==0 else regularizers.l2(weight_decay)
 
         ##########################
         # Make the model

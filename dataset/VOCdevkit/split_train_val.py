@@ -34,7 +34,7 @@ def gen_voc(VOC_Dev_Folder, des_folder):
 
 
 if __name__ == '__main__':
-    gen_voc('/Users/xiaozeng/PycharmProjects/YoloV2/dataset/VOCdevkit/VOC2007',
-            '/Users/xiaozeng/PycharmProjects/YoloV2/dataset/voc2007')
+    gen_voc('./VOC2007',
+            '../voc2007')
 
 
