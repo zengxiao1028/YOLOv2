@@ -111,18 +111,18 @@ def _main_():
     #     cv2.waitKey(1)
     #     outputdata.append(image)
     #
-    # # car
-    # video_inp = '/data/xiao/imagenet/ILSVRC/Data/VID/snippets/val/ILSVRC2015_val_00041008.mp4'
-    # videogen = skvideo.io.vreader(video_inp)
-    # outputdata = []
-    # for image in videogen:
-    #     boxes = yolo.predict(image)
-    #
-    #     image = draw_boxes(image, boxes, labels=LABELS)
-    #
-    #     cv2.imshow('image', image)
-    #     cv2.waitKey(1)
-    #     outputdata.append(image)
+    # bike
+    video_inp = '/data/xiao/imagenet/ILSVRC/Data/VID/snippets/val/ILSVRC2015_val_00041008.mp4'
+    videogen = skvideo.io.vreader(video_inp)
+    outputdata = []
+    for image in videogen:
+        boxes = yolo.predict(image)
+
+        image = draw_boxes(image, boxes, labels=LABELS)
+
+        cv2.imshow('image', image)
+        cv2.waitKey(1)
+        outputdata.append(image)
 
 
 

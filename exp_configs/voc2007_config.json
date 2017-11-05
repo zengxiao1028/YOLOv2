@@ -35,6 +35,6 @@
         "valid_annot_file"  :   "",
         "valid_times":          1,
         "obj_threshold"     :   0.3,
-        "nms_threshold"     :   0.3
+        "nms_threshold"     :   0.5
     }
 }
