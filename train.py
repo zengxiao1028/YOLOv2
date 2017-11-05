@@ -9,7 +9,7 @@ os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 
 def _main_():
 
-    config_path = './exp_configs/vid_config.json'
+    config_path = './exp_configs/voc2007_config.json'
     parse_annotation = parse_annotation_voc
 
 

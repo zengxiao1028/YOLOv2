@@ -13,9 +13,9 @@
 
     "train": {
         "name":                 "YOLOv2_voc2007",
-        "train_image_folder":   "./dataset/imagenet/train/",
-        "train_annot_folder":   "./dataset/imagenet/train_ann/",
-        "train_annot_file"  :   "./dataset/imagenet/train_ann.pkl",
+        "train_image_folder":   "./dataset/voc2007/train/",
+        "train_annot_folder":   "./dataset/voc2007/train_ann/",
+        "train_annot_file"  :   "",
         "train_times":          1,
         "pretrained_weights":   "/home/xiao/video_project/YOLOv2/pretrain_models/yolo.weights.h5",
         "batch_size":           60,
@@ -33,9 +33,9 @@
     },
 
     "valid": {
-        "valid_image_folder":   "./dataset/imagenet/val/",
-        "valid_annot_folder":   "./dataset/imagenet/val_ann/",
-        "valid_annot_file"  :   "./dataset/imagenet/val_ann.pkl",
+        "valid_image_folder":   "./dataset/voc2007/val/",
+        "valid_annot_folder":   "./dataset/voc2007/val_ann/",
+        "valid_annot_file"  :   "",
         "valid_times":          1,
         "obj_threshold"     :   0.3,
         "nms_threshold"     :   0.3
