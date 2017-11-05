@@ -4,10 +4,7 @@
         "input_size":           416,
         "anchors":              [0.57273, 0.677385, 1.87446, 2.06253, 3.33843, 5.47434, 7.88282, 3.52778, 9.77052, 9.16828],
         "max_box_per_image":    5,
-        "labels":               ["airplane", "antelope", "bear", "bicycle", "bird", "bus", "car", "cattle", "dog",
-          "domestic_cat", "elephant", "fox", "giant_panda", "hamster", "horse", "lion", "lizard", "monkey",
-          "motorcycle", "rabbit", "red_panda", "sheep", "snake", "squirrel", "tiger", "train", "turtle",
-          "watercraft", "whale", "zebra"]
+        "labels":               []
 
     },
 
