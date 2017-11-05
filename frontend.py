@@ -241,13 +241,8 @@ class YOLO(object):
             current_recall = nb_pred_box/(nb_true_box + 1e-6)
             total_recall = tf.assign_add(total_recall, current_recall)
 
-            loss = tf.Print(loss, [loss_xy], message='Loss XY \t', summarize=1000)
-            loss = tf.Print(loss, [loss_wh], message='Loss WH \t', summarize=1000)
-            loss = tf.Print(loss, [loss_conf], message='Loss Conf \t', summarize=1000)
-            loss = tf.Print(loss, [loss_class], message='Loss Class \t', summarize=1000)
-            loss = tf.Print(loss, [loss], message='Total Loss \t', summarize=1000)
-            loss = tf.Print(loss, [current_recall], message='Current Recall \t', summarize=1000)
-            loss = tf.Print(loss, [total_recall / seen], message='Average Recall \t', summarize=1000)
+            loss = tf.Print(loss, [loss_xy, loss_wh, loss_conf, loss_class, loss, current_recall, total_recall / seen],
+                            message='DEBUG', summarize=1000)
         return loss
 
     def load_YOLO_official_weights(self, weight_path):
