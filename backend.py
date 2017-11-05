@@ -286,7 +286,7 @@ class Inception3Feature(BaseFeatureExtractor):
         input_image = Input(shape=(input_size, input_size, 3))
 
         inception = InceptionV3(input_shape=(input_size,input_size,3), include_top=False)
-
+        #inception.load_weights(INCEPTION3_FEATURE_PATH)
         x = inception(input_image)
 
         self.feature_extractor_model = Model(input_image, x)

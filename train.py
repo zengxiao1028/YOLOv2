@@ -10,7 +10,7 @@ os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 def _main_():
 
     config_path = './exp_configs/voc2007_config.json'
-    parse_annotation = parse_annotation_voc
+    gen_dataset = parse_annotation_voc
 
 
 
@@ -26,7 +26,7 @@ def _main_():
         print("Reading train annotations...")
         train_imgs, train_labels = joblib.load(config['train']['train_annot_file'])
     else:
-        train_imgs, train_labels = parse_annotation(config['train']['train_annot_folder'],
+        train_imgs, train_labels = gen_dataset(config['train']['train_annot_folder'],
                                                         config['train']['train_image_folder'],
                                                         config['model']['labels'])
 

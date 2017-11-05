@@ -239,10 +239,15 @@ class YOLO(object):
             nb_pred_box = tf.reduce_sum(tf.to_float(true_box_conf > 0.5) * tf.to_float(pred_box_conf > self.obj_threshold))
             
             current_recall = nb_pred_box/(nb_true_box + 1e-6)
-            total_recall = tf.assign_add(total_recall, current_recall) 
+            total_recall = tf.assign_add(total_recall, current_recall)
 
-            loss = tf.Print(loss, [loss_xy, loss_wh, loss_conf, loss_class, loss, current_recall, total_recall/seen], message='DEBUG', summarize=1000)
-        
+            loss = tf.Print(loss, [loss_xy], message='Loss XY \t', summarize=1000)
+            loss = tf.Print(loss, [loss_wh], message='Loss WH \t', summarize=1000)
+            loss = tf.Print(loss, [loss_conf], message='Loss Conf \t', summarize=1000)
+            loss = tf.Print(loss, [loss_class], message='Loss Class \t', summarize=1000)
+            loss = tf.Print(loss, [loss], message='Total Loss \t', summarize=1000)
+            loss = tf.Print(loss, [current_recall], message='Current Recall \t', summarize=1000)
+            loss = tf.Print(loss, [total_recall / seen], message='Average Recall \t', summarize=1000)
         return loss
 
     def load_YOLO_official_weights(self, weight_path):
@@ -495,11 +500,11 @@ class YOLO(object):
         ############################################
         # Start the training process
         ############################################
-        self.model.fit_generator(generator        = train_batch.get_generator(), 
-                                 steps_per_epoch  = train_batch.get_dateset_size() * train_times, 
-                                 epochs           = nb_epoch, 
-                                 verbose          = 1,
-                                 validation_data  = valid_batch.get_generator(),
-                                 validation_steps = valid_batch.get_dateset_size() * valid_times,
+        self.model.fit_generator(generator        = train_batch,
+                                 steps_per_epoch  = len(train_batch) * train_times,
+                                 epochs           = nb_epoch,
+                                 validation_data  = valid_batch,
+                                 validation_steps = len(valid_batch) * valid_times,
                                  callbacks        = [best_checkpoint, checkpoint, tensorboard],
+                                 workers = 4,
                                  max_queue_size   = 64)
