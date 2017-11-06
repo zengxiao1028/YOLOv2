@@ -19,7 +19,7 @@ def _main_():
         config = json.load(config_buffer)
 
     validation_model_path = os.path.join(training_result_folder,  'best_' + config['train']['saved_weights_name'] )
-
+    #validation_model_path = os.path.join(training_result_folder, config['train']['saved_weights_name'])
 
 
 
@@ -59,7 +59,7 @@ def _main_():
     #   Predict video
     ###############################
 
-    video_inp = '/data/xiao/imagenet/ILSVRC/Data/VID/snippets/val/ILSVRC2015_val_00007011.mp4'
+    video_inp = '/data/xiao/imagenet/ILSVRC/Data/VID/snippets/val/ILSVRC2015_val_00041008.mp4'
     video_out = './tmp/result.mp4'
 
     metadata = skvideo.io.ffprobe(video_inp)
