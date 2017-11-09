@@ -68,6 +68,7 @@ def _main_():
     #   perform evaluation
     ###############################
     eval_folder = os.path.join(training_result_folder, 'evaluation')
+    os.makedirs(eval_folder, exist_ok=True)
     print('Evaluating...', config['model']['labels'])
 
     if os.path.exists(os.path.join(eval_folder, 'result_dict.pkl')) == False:
