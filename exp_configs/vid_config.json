@@ -16,13 +16,13 @@
         "train_image_folder":   "./dataset/imagenet/train/",
         "train_annot_folder":   "./dataset/imagenet/train_ann/",
         "train_annot_file"  :   "./dataset/imagenet/train_ann.pkl",
-        "train_times":          0.05,
+        "train_times":          0.1,
         "pretrained_weights":   "/home/xiao/video_project/YOLOv2/pretrain_models/yolo.weights.h5",
-        "batch_size":           60,
+        "batch_size":           48,
         "learning_rate":        1e-4,
         "nb_epoch":             50,
         "warmup_batches"    :   0,
-        "weight_decay"      :   0.0005,
+        "weight_decay"      :   0,
         "object_scale":         5.0,
         "no_object_scale":      1.0,
         "coord_scale":          1.0,
@@ -36,8 +36,8 @@
         "valid_image_folder":   "./dataset/imagenet/val/",
         "valid_annot_folder":   "./dataset/imagenet/val_ann/",
         "valid_annot_file"  :   "./dataset/imagenet/val_ann.pkl",
-        "valid_times":          0.01,
+        "valid_times":          0.05,
         "obj_threshold"     :   0.3,
-        "nms_threshold"     :   0.3
+        "nms_threshold"     :   0.5
     }
 }

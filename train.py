@@ -9,8 +9,8 @@ os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 
 def _main_():
 
-    config_path = './exp_configs/voc2007_config.json'
-    gen_dataset = parse_annotation_voc
+    config_path = './exp_configs/caltech_config.json'
+    gen_dataset = parse_annotation
 
 
 
@@ -36,7 +36,7 @@ def _main_():
         print("Reading val annotations...")
         valid_imgs, valid_labels = joblib.load(config['valid']['valid_annot_file'])
     elif os.path.exists(config['valid']['valid_annot_folder']):
-        valid_imgs, valid_labels = parse_annotation(config['valid']['valid_annot_folder'],
+        valid_imgs, valid_labels = gen_dataset(config['valid']['valid_annot_folder'],
                                                         config['valid']['valid_image_folder'],
                                                         config['model']['labels'])
     else:

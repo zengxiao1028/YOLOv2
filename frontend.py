@@ -502,4 +502,4 @@ class YOLO(object):
                                  validation_steps = len(valid_batch) * valid_times,
                                  callbacks        = [best_checkpoint, checkpoint, tensorboard],
                                  workers = 4,
-                                 max_queue_size   = 64)
+                                 max_queue_size   = 32)

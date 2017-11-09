@@ -13,6 +13,9 @@ from moviepy.editor import *
 
 def _main_():
 
+
+
+
     #training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_voc2007_3'
     training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_imagenetvid_7'
     config_path = os.path.join(training_result_folder, 'config.json')
@@ -43,7 +46,7 @@ def _main_():
 
 
     ###############################
-    #  Predict image
+    #  Load validation set
     ###############################
     # image_path = '/home/xiao/video_project/YOLOv2/dataset/bloodcell/JPEGImages/BloodImage_00351.jpg'
     # image = cv2.imread(image_path)
