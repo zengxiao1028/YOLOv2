@@ -1,10 +1,10 @@
 import numpy as np
 import os
 import cv2
-from utils import BoundBox,bbox_iou
+from utils import BoundBox, bbox_iou
 from collections import defaultdict
 import matplotlib.pyplot as plt
-
+import itertools
 def gen_ground_truth_boxes(gt_sample_objects,labels):
     gt_boxes = []
 
@@ -21,12 +21,17 @@ def gen_ground_truth_boxes(gt_sample_objects,labels):
 
     return gt_boxes
 
-def evaluate_img(eval_sample, yolo, config, result_dict, iou_threshold=0.5):
+def evaluate_img(eval_sample, yolo, config, result_dict, iou_threshold):
 
     img = cv2.imread(eval_sample['filename'])
 
     # obtain predicted boxes
     predicted_boxes = yolo.predict( img ,config["valid"]["obj_threshold"],config["valid"]["nms_threshold"])
+    for box in predicted_boxes:
+        box.x *= img.shape[1]
+        box.w *= img.shape[1]
+        box.y *= img.shape[0]
+        box.h *= img.shape[0]
 
     # obtain gt boxes
     ground_truth_boxes = gen_ground_truth_boxes(eval_sample['object'], config['model']['labels'])
@@ -67,13 +72,11 @@ def evaluate_img(eval_sample, yolo, config, result_dict, iou_threshold=0.5):
 
         result_dict[pred_box.get_label()].append((pred_box, tp, fp, eval_sample['filename']))
 
-def evaluate(eval_samples, yolo, config, iou_threshold):
+def evaluate(eval_samples, yolo, config, iou_threshold=0.5):
 
-    yolo = None
-    config = None
+
     predictions_dict = defaultdict(list)
     nb_pos_dict = defaultdict(int)
-    iou_threshold = 0.5
     result_dict = defaultdict(dict)
 
     for sample in eval_samples:
@@ -101,7 +104,7 @@ def evaluate(eval_samples, yolo, config, iou_threshold):
         ap = 0
         for x in range(0, 11):
             t = x/10.
-            tmp = precision(recall >= t)
+            tmp = precision[recall >= t]
             if len(tmp)==0:
                 p = 0
             else:
@@ -119,25 +122,36 @@ def evaluate(eval_samples, yolo, config, iou_threshold):
     mAP = mAP / nb_classes
 
     print('mAP', mAP)
-    return result_dict
+    return result_dict, mAP
 
-def sumnmarize_result(result_dict, labels, save_folder ='/tmp'):
 
+def sumnmarize_result(result, labels, save_folder ='/tmp'):
+
+    result_dict, mAP = result
+    marker = ('d', 'h', '*', '<', 'o','s','v','^','p')
+    my_color = ('gold', 'red', 'green', 'magenta', 'peru','darkgray','indigo','blue','lime')
+    markers = itertools.product(marker,my_color)
+
+    os.makedirs(save_folder,exist_ok=True)
     ### plot pr curve for each class
     for label_idx in result_dict.keys():
-
+        marker,my_color =  next(markers)
         #precision-recall curve
         xs = result_dict[label_idx]['recall']
         ys = result_dict[label_idx]['precision']
 
-        plt.plot(xs,ys)
-        plt.xlabel('precision')
-        plt.xlabel('recall')
-        plt.title(labels[label_idx])
-        plt.xlabel('precision')
-        plt.savefig(os.path.join(save_folder,labels[label_idx]+'_pr_curve.pdf'), bbox_inches='tight')
+        plt.plot(xs,ys,label=labels[label_idx],marker=marker, color=my_color, linewidth=1,  markersize=5)
 
-    ### plot total precision/recall for each class
+
+    plt.title('Precision-Recall Curves, mAP: %.2f',result_dict['mAP'])
+    plt.xlabel('recall')
+    plt.ylabel('precision')
+    plt.legend(labels,loc='center left', bbox_to_anchor=(1,0.5))
+    plt.savefig(os.path.join(save_folder, 'pr_curve.pdf'), bbox_inches='tight')
+    plt.show()
+    plt.close()
+
+
 
 
 

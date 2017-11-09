@@ -8,39 +8,43 @@ import tqdm
 import cv2
 from utils import draw_boxes
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
-from moviepy.editor import *
-
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
+from preprocessing import *
+from sklearn.externals import joblib
+from metric import evaluator
 def _main_():
 
 
-
-
     #training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_voc2007_3'
-    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_imagenetvid_7'
+    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_voc2007_4'
+    gen_dataset = parse_annotation_voc
+
+
+    ###############################
+    #   Load config
+    ###############################
     config_path = os.path.join(training_result_folder, 'config.json')
     with open(config_path) as config_buffer:
         config = json.load(config_buffer)
-
-    #validation_model_path = os.path.join(training_result_folder,  'best_' + config['train']['saved_weights_name'] )
-    validation_model_path = os.path.join(training_result_folder, config['train']['saved_weights_name'])
-
-
 
 
     ###############################
     #   Construct the model
     ###############################
-
     yolo = YOLO.init_from_config(config)
+
+
 
     ###############################
     #   Load the pretrained weights (if any)
     ###############################
-
+    #validation_model_path = os.path.join(training_result_folder,  'best_' + config['train']['saved_weights_name'] )
+    validation_model_path = os.path.join(training_result_folder, config['train']['saved_weights_name'])
     if os.path.exists(validation_model_path):
         print("Loading pre-trained weights in", validation_model_path)
         yolo.load_weights(validation_model_path)
+    else:
+        raise FileNotFoundError('cannot find model: %s' % validation_model_path)
 
 
 
@@ -48,50 +52,31 @@ def _main_():
     ###############################
     #  Load validation set
     ###############################
-    # image_path = '/home/xiao/video_project/YOLOv2/dataset/bloodcell/JPEGImages/BloodImage_00351.jpg'
-    # image = cv2.imread(image_path)
-    # boxes = yolo.predict(image,0.5,0.3)
-    # image = draw_boxes(image, boxes, config['model']['labels'])
-    #
-    # print(len(boxes), 'boxes are found')
-    #
-    # cv2.imwrite('./tmp/result.jpg', image)
-
+        # parse annotations of the validation set, if any, otherwise split the training set
+    if ('valid_annot_file' in config['valid'].keys() and os.path.exists(config['valid']['valid_annot_file'])):
+        print("Reading val annotations...")
+        valid_imgs, valid_labels = joblib.load(config['valid']['valid_annot_file'])
+    elif os.path.exists(config['valid']['valid_annot_folder']):
+        valid_imgs, valid_labels = gen_dataset(config['valid']['valid_annot_folder'],
+                                               config['valid']['valid_image_folder'],
+                                               config['model']['labels'])
+    else:
+        raise FileNotFoundError('cannot load validation set')
 
 
     ###############################
-    #   Predict video
+    #   perform evaluation
     ###############################
+    eval_folder = os.path.join(training_result_folder, 'evaluation')
+    print('Evaluating...', config['model']['labels'])
 
-    video_inp = '/data/xiao/imagenet/ILSVRC/Data/VID/snippets/val/ILSVRC2015_val_00007011.mp4'
-    video_out = './tmp/result.mp4'
+    if os.path.exists(os.path.join(eval_folder, 'result_dict.pkl')) == False:
+        result = evaluator.evaluate(valid_imgs,yolo,config,0.5)
+        joblib.dump(result,os.path.join(eval_folder, 'result_dict.pkl'))
+    else:
+        result = joblib.load(os.path.join(eval_folder, 'result_dict.pkl'))
 
-    metadata = skvideo.io.ffprobe(video_inp)
-    video_height = metadata["video"]["@height"]
-    video_width = metadata["video"]["@width"]
-    num_frames = metadata["video"]["@nb_frames"]
-
-    videogen = skvideo.io.vreader(video_inp)
-    outputdata = []
-
-    for image in videogen:
-
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        boxes = yolo.predict(image, config["valid"]["obj_threshold"],0.1)
-
-        image = draw_boxes(image, boxes, labels=config['model']['labels'])
-
-        cv2.imshow('image', image)
-        cv2.waitKey(1)
-
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        outputdata.append(image)
-
-
-    skvideo.io.vwrite(video_out, np.array(outputdata).astype(np.uint8))
-    # clip = VideoFileClip(video_out)
-    # clip.preview()
-
+    evaluator.sumnmarize_result(result,config['model']['labels'],eval_folder)
 
 if __name__ == '__main__':
 
