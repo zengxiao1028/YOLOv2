@@ -14,10 +14,16 @@ from moviepy.editor import *
 def _main_():
 
     #training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_voc2007_3'
-    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_imagenetvid_7'
+    #training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_imagenetvid_7'
+    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_caltech_2'
+
+
+
     config_path = os.path.join(training_result_folder, 'config.json')
     with open(config_path) as config_buffer:
         config = json.load(config_buffer)
+
+
 
     #validation_model_path = os.path.join(training_result_folder,  'best_' + config['train']['saved_weights_name'] )
     validation_model_path = os.path.join(training_result_folder, config['train']['saved_weights_name'])
@@ -60,7 +66,7 @@ def _main_():
     #   Predict video
     ###############################
 
-    video_inp = '/data/xiao/imagenet/ILSVRC/Data/VID/snippets/val/ILSVRC2015_val_00007011.mp4'
+    video_inp = '/home/xiao/video_project/YOLOv2/dataset/caltech_pedestrian/data/plots/set07_V002.avi'
     video_out = './tmp/result.mp4'
 
     metadata = skvideo.io.ffprobe(video_inp)
@@ -74,7 +80,7 @@ def _main_():
     for image in videogen:
 
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        boxes = yolo.predict(image, config["valid"]["obj_threshold"],0.1)
+        boxes = yolo.predict(image, 0.3, 0.3)
 
         image = draw_boxes(image, boxes, labels=config['model']['labels'])
 
