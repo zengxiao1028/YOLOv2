@@ -16,9 +16,9 @@ def _main_():
 
 
     #training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_voc2007_3'
-    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_voc2007_4'
+    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_caltech_3'
     gen_dataset = parse_annotation_voc
-
+    best_only = False
 
     ###############################
     #   Load config
@@ -38,8 +38,9 @@ def _main_():
     ###############################
     #   Load the pretrained weights (if any)
     ###############################
+    model_path = 'best_' + config['train']['saved_weights_name'] if best_only else config['train']['saved_weights_name']
     #validation_model_path = os.path.join(training_result_folder,  'best_' + config['train']['saved_weights_name'] )
-    validation_model_path = os.path.join(training_result_folder, config['train']['saved_weights_name'])
+    validation_model_path = os.path.join(training_result_folder, model_path)
     if os.path.exists(validation_model_path):
         print("Loading pre-trained weights in", validation_model_path)
         yolo.load_weights(validation_model_path)
@@ -71,11 +72,12 @@ def _main_():
     os.makedirs(eval_folder, exist_ok=True)
     print('Evaluating...', config['model']['labels'])
 
-    if os.path.exists(os.path.join(eval_folder, 'result_dict.pkl')) == False:
+    result_file = 'best_result_dict.pkl' if best_only else 'result_dict.pkl'
+    if os.path.exists(os.path.join(eval_folder, result_file)) == False:
         result = evaluator.evaluate(valid_imgs,yolo,config,0.5)
-        joblib.dump(result,os.path.join(eval_folder, 'result_dict.pkl'))
+        joblib.dump(result,os.path.join(eval_folder, result_file))
     else:
-        result = joblib.load(os.path.join(eval_folder, 'result_dict.pkl'))
+        result = joblib.load(os.path.join(eval_folder, result_file))
 
     evaluator.sumnmarize_result(result,config['model']['labels'],eval_folder)
 

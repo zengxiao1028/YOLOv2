@@ -128,6 +128,7 @@ def evaluate(eval_samples, yolo, config, iou_threshold=0.5):
 def sumnmarize_result(result, labels, save_folder ='/tmp'):
 
     result_dict, mAP = result
+    print('mAP:%.2f' % mAP)
     marker = ('d', 'h', '*', '<', 'o','s','v','^','p')
     my_color = ('gold', 'red', 'green', 'magenta', 'peru','darkgray','indigo','blue','lime')
     markers = itertools.product(marker,my_color)
