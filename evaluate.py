@@ -16,9 +16,10 @@ def _main_():
 
 
     #training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_voc2007_3'
-    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_caltech_3'
-    gen_dataset = parse_annotation_voc
+    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_imagenetvid_7'
+    gen_dataset = parse_annotation_ILSVRC
     best_only = False
+
 
     ###############################
     #   Load config
@@ -32,7 +33,6 @@ def _main_():
     #   Construct the model
     ###############################
     yolo = YOLO.init_from_config(config)
-
 
 
     ###############################
@@ -68,14 +68,16 @@ def _main_():
     ###############################
     #   perform evaluation
     ###############################
-    eval_folder = os.path.join(training_result_folder, 'evaluation')
+    eval_folder = os.path.join(training_result_folder, 'best_only_evaluation' if best_only else 'evaluation')
     os.makedirs(eval_folder, exist_ok=True)
     print('Evaluating...', config['model']['labels'])
 
-    result_file = 'best_result_dict.pkl' if best_only else 'result_dict.pkl'
+    result_file = 'result_dict.pkl' # stores result and map
+    prediction_file = 'prediction_dict.pkl' # stores prediction boxes
     if os.path.exists(os.path.join(eval_folder, result_file)) == False:
         result = evaluator.evaluate(valid_imgs,yolo,config,0.5)
-        joblib.dump(result,os.path.join(eval_folder, result_file))
+        joblib.dump( (result[0],result[1]), os.path.join(eval_folder, result_file))
+        joblib.dump(  result[2], os.path.join(eval_folder, prediction_file))
     else:
         result = joblib.load(os.path.join(eval_folder, result_file))
 

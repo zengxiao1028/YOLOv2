@@ -122,7 +122,7 @@ def evaluate(eval_samples, yolo, config, iou_threshold=0.5):
     mAP = mAP / nb_classes
 
     print('mAP', mAP)
-    return result_dict, mAP
+    return result_dict, mAP, predictions_dict
 
 
 def sumnmarize_result(result, labels, save_folder ='/tmp'):
@@ -144,7 +144,7 @@ def sumnmarize_result(result, labels, save_folder ='/tmp'):
         plt.plot(xs,ys,label=labels[label_idx],marker=marker, color=my_color, linewidth=1,  markersize=5)
 
 
-    plt.title('Precision-Recall Curves, mAP: %.2f',result_dict['mAP'])
+    plt.title('Precision-Recall Curves, mAP: %.2f' % result_dict['mAP'])
     plt.xlabel('recall')
     plt.ylabel('precision')
     plt.legend(labels,loc='center left', bbox_to_anchor=(1,0.5))
