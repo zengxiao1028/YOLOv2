@@ -76,12 +76,14 @@ def _main_():
     prediction_file = 'prediction_dict.pkl' # stores prediction boxes
     if os.path.exists(os.path.join(eval_folder, result_file)) == False:
         result = evaluator.evaluate(valid_imgs,yolo,config,0.5)
-        joblib.dump( (result[0],result[1]), os.path.join(eval_folder, result_file))
-        joblib.dump(  result[2], os.path.join(eval_folder, prediction_file))
+        result_dict = (result[0],result[1])
+        prediction_file = result[3]
+        joblib.dump( result_dict, os.path.join(eval_folder, result_file))
+        joblib.dump(  prediction_file, os.path.join(eval_folder, prediction_file))
     else:
-        result = joblib.load(os.path.join(eval_folder, result_file))
+        result_dict = joblib.load(os.path.join(eval_folder, result_file))
 
-    evaluator.sumnmarize_result(result,config['model']['labels'],eval_folder)
+    evaluator.sumnmarize_result(result_dict,config['model']['labels'],eval_folder)
 
 if __name__ == '__main__':
 
