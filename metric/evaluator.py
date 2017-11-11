@@ -128,23 +128,25 @@ def evaluate(eval_samples, yolo, config, iou_threshold=0.5):
 def sumnmarize_result(result, labels, save_folder ='/tmp'):
 
     result_dict, mAP = result
-    print('mAP:%.2f' % mAP)
+    print('All classes mAP:%.2f' % mAP)
     marker = ('d', 'h', '*', '<', 'o','s','v','^','p')
     my_color = ('gold', 'red', 'green', 'magenta', 'peru','darkgray','indigo','blue','lime')
     markers = itertools.product(marker,my_color)
 
     os.makedirs(save_folder,exist_ok=True)
     ### plot pr curve for each class
+    filtered_aps = []
     for label_idx in result_dict.keys():
         marker,my_color =  next(markers)
         #precision-recall curve
         xs = result_dict[label_idx]['recall']
         ys = result_dict[label_idx]['precision']
+        ap = result_dict[label_idx]['ap']
+        filtered_aps.append(ap)
+        plt.plot(xs,ys,label=labels[label_idx]+':%.2f' % ap, marker=marker, color=my_color, linewidth=1,  markersize=5)
 
-        plt.plot(xs,ys,label=labels[label_idx],marker=marker, color=my_color, linewidth=1,  markersize=5)
 
-
-    plt.title('Precision-Recall Curves, mAP: %.2f' % result_dict['mAP'])
+    plt.title('Precision-Recall Curves, mAP: %.2f' % np.mean(filtered_aps))
     plt.xlabel('recall')
     plt.ylabel('precision')
     plt.legend(labels,loc='center left', bbox_to_anchor=(1,0.5))
