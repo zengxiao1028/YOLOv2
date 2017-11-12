@@ -163,3 +163,6 @@ def softmax(x, axis=-1, t=-100.):
     e_x = np.exp(x)
     
     return e_x / e_x.sum(axis, keepdims=True)
+
+def space_to_depth_x2(x):
+    return tf.space_to_depth(x, block_size=2)

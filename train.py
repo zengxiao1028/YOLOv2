@@ -1,16 +1,15 @@
 import os
 import numpy as np
 from preprocessing import *
-from frontend import YOLO
 import json
 from sklearn.externals import joblib
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 #os.environ["CUDA_VISIBLE_DEVICES"]="0"
-
+from xiaofrontend import XiaoYOLO
 def _main_():
 
-    config_path = './exp_configs/caltech_config.json'
-    gen_dataset = parse_annotation
+    config_path = './exp_configs/voc2007_config.json'
+    gen_dataset = parse_annotation_voc
 
 
 
@@ -52,7 +51,7 @@ def _main_():
     ###############################
     #   Construct the model 
     ###############################
-    yolo = YOLO.init_from_config(config)
+    xyolo = XiaoYOLO.init_from_config(config)
 
     ###############################
     #   Load the pretrained weights (if any) 
@@ -61,7 +60,7 @@ def _main_():
     if os.path.exists(config['train']['pretrained_weights']):
         print("Loading pre-trained weights in", config['train']['pretrained_weights'])
         #yolo.load_weights(config['train']['pretrained_weights'])
-        yolo.load_YOLO_official_weights(config['train']['pretrained_weights'])
+        xyolo.load_YOLO_official_weights(config['train']['pretrained_weights'])
     ###############################
     #   Freeze layers
     ###############################
@@ -71,7 +70,7 @@ def _main_():
     #   Start the training process 
     ###############################
 
-    yolo.train(config_path        = config_path,
+    xyolo.train(config_path        = config_path,
                train_imgs         = train_imgs,
                valid_imgs         = valid_imgs,
                train_times        = config['train']['train_times'],
