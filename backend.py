@@ -148,7 +148,7 @@ class FullYoloFeature(BaseFeatureExtractor):
         skip_connection = Conv2D(64, (1,1), strides=(1,1), padding='same', name='conv_21', use_bias=False, kernel_regularizer=kernel_regularizer)(skip_connection)
         skip_connection = BatchNormalization(name='norm_21')(skip_connection)
         skip_connection = LeakyReLU(alpha=0.1)(skip_connection)
-        skip_connection = Lambda(lambda x:tf.space_to_depth())(skip_connection)
+        skip_connection = Lambda(lambda y:tf.space_to_depth(y,block_size=2))(skip_connection)
 
         x = concatenate([skip_connection, x])
 
