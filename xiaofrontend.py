@@ -281,18 +281,7 @@ class XiaoYOLO(YOLO):
 
         return output
 
-    def predict(self, image, obj_threshold=0.3, nms_threshold=0.3):
-        image = cv2.resize(image, (self.input_size, self.input_size))
-        image = self.normalize(image)
 
-        input_image = image[:, :, ::-1]
-        input_image = np.expand_dims(input_image, 0)
-        dummy_array = dummy_array = np.zeros((1, 1, 1, 1, self.max_box_per_image, 4))
-
-        netout = self.model.predict([input_image, dummy_array])[0]
-        boxes = self.decode_netout(netout, obj_threshold, nms_threshold)
-
-        return boxes
 
     def normalize(self,image):
         return image / 255.

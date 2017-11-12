@@ -453,10 +453,10 @@ class YOLO(object):
 
         train_batch = BatchGenerator(train_imgs,
                                      generator_config,
-                                     norm=self.feature_extractor.normalize)
+                                     norm=self.normalize)
         valid_batch = BatchGenerator(valid_imgs,
                                      generator_config,
-                                     norm=self.feature_extractor.normalize,
+                                     norm=self.normalize,
                                      jitter=False)
 
         ############################################
