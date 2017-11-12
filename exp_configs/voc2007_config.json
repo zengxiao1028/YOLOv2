@@ -15,7 +15,7 @@
         "train_annot_folder":   "./dataset/voc2007/train_ann/",
         "train_annot_file"  :   "",
         "train_times":          1,
-        "pretrained_weights":   "/home/xiao/video_project/YOLOv2/pretrain_models/yolo.weights.h5",
+        "pretrained_weights":   "./pretrain_models/yolo.weights.h5",
         "batch_size":           48,
         "learning_rate":        1e-4,
         "nb_epoch":             500,
