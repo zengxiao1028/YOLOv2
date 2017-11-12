@@ -9,7 +9,7 @@ from xiaofrontend import XiaoYOLO
 def _main_():
 
     config_path = './exp_configs/voc2007_config.json'
-    gen_dataset = parse_annotation_voc
+    gen_dataset_fn =parse_annotation_voc
 
 
 
@@ -25,7 +25,7 @@ def _main_():
         print("Reading train annotations...")
         train_imgs, train_labels = joblib.load(config['train']['train_annot_file'])
     else:
-        train_imgs, train_labels = gen_dataset(config['train']['train_annot_folder'],
+        train_imgs, train_labels = gen_dataset_fn(config['train']['train_annot_folder'],
                                                         config['train']['train_image_folder'],
                                                         config['model']['labels'])
 
@@ -35,7 +35,7 @@ def _main_():
         print("Reading val annotations...")
         valid_imgs, valid_labels = joblib.load(config['valid']['valid_annot_file'])
     elif os.path.exists(config['valid']['valid_annot_folder']):
-        valid_imgs, valid_labels = gen_dataset(config['valid']['valid_annot_folder'],
+        valid_imgs, valid_labels = gen_dataset_fn(config['valid']['valid_annot_folder'],
                                                         config['valid']['valid_image_folder'],
                                                         config['model']['labels'])
     else:
