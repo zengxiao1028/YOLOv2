@@ -155,7 +155,7 @@ class FullYoloFeature(BaseFeatureExtractor):
         # Layer 22
         x = Conv2D(1024, (3,3), strides=(1,1), padding='same', name='conv_22', use_bias=False, kernel_regularizer=kernel_regularizer)(x)
         x = BatchNormalization(name='norm_22')(x)
-        x = LeakyReLU(alpha=0.1)(x)
+        x = LeakyReLU(alpha=0.1,name='out_22')(x)
 
         self.feature_extractor_model = Model(input_image, x)
         self.feature_extractor_model.summary()

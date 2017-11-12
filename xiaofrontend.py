@@ -64,11 +64,11 @@ class XiaoYOLO(YOLO):
         self.grid_h, self.grid_w = self.feature_extractor.get_output_shape()
 
         #which level of feature to use
-        #features = self.feature_extractor.extract(input_image)
+        features = self.feature_extractor.feature_extractor_model.get_layer('out_22').output
+        output = self._make_head(features,kr)
 
-        low_features = self.feature_extractor.feature_extractor_model.get_layer('out_2').output
-
-        output = self._make_low_head(low_features,kr)
+        #low_features = self.feature_extractor.feature_extractor_model.get_layer('out_2').output
+        #output = self._make_low_head(low_features,kr)
 
 
         output = Lambda(lambda args: args[0])([output, self.true_boxes])

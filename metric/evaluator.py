@@ -21,12 +21,12 @@ def gen_ground_truth_boxes(gt_sample_objects,labels):
 
     return gt_boxes
 
-def evaluate_img(eval_sample, yolo, config, result_dict, iou_threshold):
+def evaluate_img(eval_sample, yolo, config, result_dict, iou_threshold,obj_threshold, nms_threshold):
 
     img = cv2.imread(eval_sample['filename'])
 
     # obtain predicted boxes
-    predicted_boxes = yolo.predict( img ,config["valid"]["obj_threshold"],config["valid"]["nms_threshold"])
+    predicted_boxes = yolo.predict( img, obj_threshold, nms_threshold)
     for box in predicted_boxes:
         box.x *= img.shape[1]
         box.w *= img.shape[1]
@@ -72,7 +72,7 @@ def evaluate_img(eval_sample, yolo, config, result_dict, iou_threshold):
 
         result_dict[pred_box.get_label()].append((pred_box, tp, fp, eval_sample['filename']))
 
-def evaluate(eval_samples, yolo, config, iou_threshold=0.5):
+def evaluate(eval_samples, yolo, config, iou_threshold=0.5, obj_threshold=0.3, nms_threshold=0.3):
 
 
     predictions_dict = defaultdict(list)
@@ -80,7 +80,7 @@ def evaluate(eval_samples, yolo, config, iou_threshold=0.5):
     result_dict = defaultdict(dict)
 
     for sample in eval_samples:
-        evaluate_img(sample, yolo, config, predictions_dict, iou_threshold)
+        evaluate_img(sample, yolo, config, predictions_dict, iou_threshold, obj_threshold, nms_threshold)
         for obj in sample['object']:
             label = config['model']['labels'].index(obj['name'])
             nb_pos_dict[label] += 1
