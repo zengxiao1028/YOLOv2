@@ -64,7 +64,7 @@ class XiaoYOLO(YOLO):
         self.grid_h, self.grid_w = self.feature_extractor.get_output_shape()
 
         #which level of feature to use
-        features = self.feature_extractor.extract(input_image)
+        #features = self.feature_extractor.extract(input_image)
 
         low_features = self.feature_extractor.feature_extractor_model.get_layer('out_2').output
 
@@ -73,7 +73,7 @@ class XiaoYOLO(YOLO):
 
         output = Lambda(lambda args: args[0])([output, self.true_boxes])
 
-        self.model = Model([input_image, self.true_boxes], output)
+        self.model = Model([self.feature_extractor.feature_extractor_model.input, self.true_boxes], output)
 
         # initialize the weights of the detection layer
         layer = self.model.layers[-4]
@@ -124,7 +124,7 @@ class XiaoYOLO(YOLO):
                        padding='same',
                        name='sub_conv4',
                        kernel_regularizer=kr)(sub_x)
-        sub_x = BatchNormalization(name='sub_norm1')(sub_x)
+        sub_x = BatchNormalization(name='sub_norm4')(sub_x)
         sub_x = LeakyReLU(alpha=0.1)(sub_x)
 
         # resize to target
