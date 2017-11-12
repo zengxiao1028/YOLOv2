@@ -10,10 +10,10 @@ from sklearn.externals import joblib
 from metric import evaluator
 def _main_():
 
-    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_voc2007_3'
+    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_voc2007_8'
     #training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_imagenetvid_4'
     gen_dataset = parse_annotation_voc
-    best_only = False
+    best_only = True
 
 
     ###############################
@@ -27,7 +27,7 @@ def _main_():
     ###############################
     #   Construct the model
     ###############################
-    yolo = XiaoYOLO.init_from_config(config)
+    yolo = YOLO.init_from_config(config)
 
 
     ###############################

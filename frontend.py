@@ -251,6 +251,8 @@ class YOLO(object):
             self.feature_extractor.feature_extractor_model.load_weights(weight_path, by_name=True)
         except ValueError as err:
             print("Error Loading Feature Extractor weights:",err)
+        except AttributeError as err:
+            print("Error Loading Feature Extractor weights:", err)
             pass
 
         # load feature extractor model weights
