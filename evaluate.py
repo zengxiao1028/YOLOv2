@@ -1,14 +1,10 @@
 import os
-import numpy as np
-from preprocessing import parse_annotation_voc
-from frontend import YOLO
-import json
-import skvideo.io
-import tqdm
-import cv2
-from utils import draw_boxes
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"]="1"
+from frontend import YOLO
+import json
+
+
 from preprocessing import *
 from sklearn.externals import joblib
 from metric import evaluator
@@ -16,8 +12,8 @@ def _main_():
 
 
     #training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_voc2007_3'
-    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_imagenetvid_7'
-    gen_dataset = parse_annotation_ILSVRC
+    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_imagenetvid_4'
+    gen_dataset = parse_annotation_voc
     best_only = False
 
 
@@ -77,8 +73,8 @@ def _main_():
     if os.path.exists(os.path.join(eval_folder, result_file)) == False:
         result = evaluator.evaluate(valid_imgs,yolo,config,0.5)
         result_dict = (result[0],result[1])
-        prediction_file = result[3]
-        joblib.dump( result_dict, os.path.join(eval_folder, result_file))
+        prediction_dict = result[2]
+        joblib.dump( prediction_dict, os.path.join(eval_folder, result_file))
         joblib.dump(  prediction_file, os.path.join(eval_folder, prediction_file))
     else:
         result_dict = joblib.load(os.path.join(eval_folder, result_file))
