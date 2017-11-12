@@ -278,10 +278,12 @@ class YOLO(object):
         for layer in self.feature_extractor.feature_extractor_model.layers[:to_layer]:
             layer.trainable = False
 
+    def normalize(self,image):
+        return self.feature_extractor.normalize(image)
 
     def predict(self, image,obj_threshold=0.3, nms_threshold=0.3):
         image = cv2.resize(image, (self.input_size, self.input_size))
-        image = self.feature_extractor.normalize(image)
+        image = self.normalize(image)
 
         input_image = image[:,:,::-1]
         input_image = np.expand_dims(input_image, 0)

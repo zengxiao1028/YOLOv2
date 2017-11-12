@@ -27,7 +27,7 @@ def _main_():
     ###############################
     #   Construct the model
     ###############################
-    yolo = YOLO.init_from_config(config)
+    yolo = XiaoYOLO.init_from_config(config)
 
 
     ###############################

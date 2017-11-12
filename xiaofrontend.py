@@ -5,7 +5,7 @@ import tensorflow as tf
 import numpy as np
 from keras.layers.merge import concatenate
 from keras.applications.mobilenet import MobileNet
-import shutil
+import cv2
 from keras.layers.advanced_activations import LeakyReLU
 from preprocessing import BatchGenerator
 from keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoard
@@ -46,11 +46,11 @@ class XiaoYOLO(YOLO):
         input_image = Input(shape=(self.input_size, self.input_size, 3))
         self.true_boxes = Input(shape=(1, 1, 1, max_box_per_image, 4))
 
-        features = self._make_body(input_image,kr)
+        features = self._make_body(input_image, kr)
 
-        print(features.get_output_shape())
+        print(features.shape)
 
-        self.grid_h, self.grid_w = features.get_output_shape()
+        self.grid_h, self.grid_w = features.shape.as_list()[1:3]
 
         output = self._make_head(features, kr)
 
@@ -280,3 +280,19 @@ class XiaoYOLO(YOLO):
 
 
         return output
+
+    def predict(self, image, obj_threshold=0.3, nms_threshold=0.3):
+        image = cv2.resize(image, (self.input_size, self.input_size))
+        image = self.normalize(image)
+
+        input_image = image[:, :, ::-1]
+        input_image = np.expand_dims(input_image, 0)
+        dummy_array = dummy_array = np.zeros((1, 1, 1, 1, self.max_box_per_image, 4))
+
+        netout = self.model.predict([input_image, dummy_array])[0]
+        boxes = self.decode_netout(netout, obj_threshold, nms_threshold)
+
+        return boxes
+
+    def normalize(self,image):
+        return image / 255.
