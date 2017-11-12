@@ -10,7 +10,7 @@ from sklearn.externals import joblib
 from metric import evaluator
 def _main_():
 
-    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_voc2007_7'
+    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_voc2007_3'
     #training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_imagenetvid_4'
     gen_dataset = parse_annotation_voc
     best_only = False
@@ -70,7 +70,8 @@ def _main_():
     result_file = 'result_dict.pkl' # stores result and map
     prediction_file = 'prediction_dict.pkl' # stores prediction boxes
     if os.path.exists(os.path.join(eval_folder, result_file)) == False:
-        result = evaluator.evaluate(valid_imgs,yolo,config,iou_threshold=0.5, obj_threshold=config['valid']['obj_threshold'], nms_threshold=config['valid']['nms_threshold'])
+        result = evaluator.evaluate(valid_imgs,yolo,config,iou_threshold=0.5,
+                                    obj_threshold=config['valid']['obj_threshold'], nms_threshold=config['valid']['nms_threshold'])
         result_dict = (result[0],result[1])
         prediction_dict = result[2]
         joblib.dump( result_dict, os.path.join(eval_folder, result_file))
