@@ -9,7 +9,8 @@
     },
 
     "train": {
-        "name":                 "YOLOv2_voc2007",
+        "name":                 "YOLOv2_voc2007_subconv2",
+        "description"       :   "Use conv2 early exit",
         "train_image_folder":   "./dataset/voc2007/train/",
         "train_annot_folder":   "./dataset/voc2007/train_ann/",
         "train_annot_file"  :   "",

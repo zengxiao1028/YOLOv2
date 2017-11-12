@@ -1,6 +1,6 @@
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"]="1"
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
 from frontend import YOLO
 import json
 
@@ -10,11 +10,10 @@ from sklearn.externals import joblib
 from metric import evaluator
 def _main_():
 
-
-    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_voc2007_1'
+    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_voc2007_5'
     #training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_imagenetvid_4'
     gen_dataset = parse_annotation_voc
-    best_only = False
+    best_only = True
 
 
     ###############################
@@ -74,8 +73,8 @@ def _main_():
         result = evaluator.evaluate(valid_imgs,yolo,config,0.5)
         result_dict = (result[0],result[1])
         prediction_dict = result[2]
-        joblib.dump( prediction_dict, os.path.join(eval_folder, result_file))
-        joblib.dump(  prediction_file, os.path.join(eval_folder, prediction_file))
+        joblib.dump( result_dict, os.path.join(eval_folder, result_file))
+        joblib.dump(  prediction_dict, os.path.join(eval_folder, prediction_file))
     else:
         result_dict = joblib.load(os.path.join(eval_folder, result_file))
 

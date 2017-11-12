@@ -68,7 +68,7 @@ class XiaoYOLO(YOLO):
 
         low_features = self.feature_extractor.feature_extractor_model.get_layer('out_2').output
 
-        output = self._make_head(low_features)
+        output = self._make_low_head(low_features,kr)
 
 
         output = Lambda(lambda args: args[0])([output, self.true_boxes])
