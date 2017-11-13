@@ -17,7 +17,7 @@ from skimage import io
 from matplotlib import pyplot as plt
 io.use_plugin('matplotlib')
 from moviepy.editor import *
-
+from xiaofrontend import XiaoYOLO
 
 def _main_():
 
@@ -42,7 +42,7 @@ def _main_():
     #   Make the model
     ###############################
 
-    yolo = YOLO(architecture='Full Yolo',
+    yolo = XiaoYOLO(architecture='Full Yolo',
                 input_size=416,
                 labels=LABELS,
                 max_box_per_image=5,
@@ -116,6 +116,7 @@ def _main_():
     videogen = skvideo.io.vreader(video_inp)
     outputdata = []
     for image in videogen:
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
         boxes = yolo.predict(image)
 
         image = draw_boxes(image, boxes, labels=LABELS)

@@ -13,7 +13,7 @@ from utils import BoundBox
 from backend import TinyYoloFeature, FullYoloFeature, MobileNetFeature, SqueezeNetFeature, Inception3Feature
 from keras.utils import multi_gpu_model
 from keras import regularizers
-
+from utils import WeightReader
 
 class XiaoYOLO(object):
     def __init__(self, architecture,
@@ -268,6 +268,7 @@ class XiaoYOLO(object):
         except ValueError as err:
             print("Error Loading Top layer weights:", err)
             pass
+
 
     def load_weights(self, weight_path):
 

@@ -19,7 +19,7 @@
         "learning_rate":        1e-4,
         "nb_epoch":             18,
         "warmup_batches"    :   0,
-        "weight_decay"      :   0,
+        "weight_decay"      :   0.0,
         "object_scale":         5.0,
         "no_object_scale":      1.0,
         "coord_scale":          1.0,
