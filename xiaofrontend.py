@@ -78,7 +78,7 @@ class XiaoYOLO(object):
         output = Lambda(lambda args: args[0])([output, self.true_boxes])
 
         #self.model = Model([input_image, self.true_boxes], output)
-        self.model = Model([self.feature_extractor.feature_extractor_model.input, self.true_boxes], output)
+        self.model = Model([self.feature_extractor.input, self.true_boxes], output)
 
         # initialize the weights of the detection layer
         layer = self.model.layers[-4]
