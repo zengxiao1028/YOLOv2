@@ -52,7 +52,7 @@ def _main_():
     ###############################
     #   Construct the model 
     ###############################
-    yolo = XiaoYOLO.init_from_config(config)
+    yolo = YOLO.init_from_config(config)
 
     ###############################
     #   Load the pretrained weights (if any) 
