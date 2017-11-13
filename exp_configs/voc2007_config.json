@@ -10,7 +10,6 @@
 
     "train": {
         "name":                 "YOLOv2_voc2007",
-        "description"       :   "test_new_interface,should be the same",
         "train_image_folder":   "./dataset/voc2007/train/",
         "train_annot_folder":   "./dataset/voc2007/train_ann/",
         "train_annot_file"  :   "",
@@ -18,9 +17,9 @@
         "pretrained_weights":   "./pretrain_models/yolo.weights.h5",
         "batch_size":           48,
         "learning_rate":        1e-4,
-        "nb_epoch":             500,
+        "nb_epoch":             18,
         "warmup_batches"    :   0,
-        "weight_decay"      :   0.00001,
+        "weight_decay"      :   0,
         "object_scale":         5.0,
         "no_object_scale":      1.0,
         "coord_scale":          1.0,
