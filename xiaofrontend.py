@@ -58,11 +58,15 @@ class XiaoYOLO(object):
             raise Exception(
                 'Architecture not supported! Only support Full Yolo, Tiny Yolo, MobileNet, SqueezeNet, and Inception3 at the moment!')
 
-        print(self.feature_extractor.get_output_shape())
-        self.grid_h, self.grid_w = self.feature_extractor.get_output_shape()
+        #print(self.feature_extractor.get_output_shape())
+        #self.grid_h, self.grid_w = self.feature_extractor.get_output_shape()
+
+        print(self.feature_extractor.features.shape)
+        self.grid_h, self.grid_w = self.feature_extractor.features.shape.as_list()[1:3]
 
         #features = self.feature_extractor.extract(input_image)
-        features = self.feature_extractor.feature_extractor_model.get_layer('out_22').output
+        #features = self.feature_extractor.feature_extractor_model.get_layer('out_22').output
+        features = self.feature_extractor.features
 
         # make the object detection layer
         output = Conv2D(self.nb_box * (4 + 1 + self.nb_class),
