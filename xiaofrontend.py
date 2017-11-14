@@ -1,22 +1,10 @@
 from keras.models import Model
 from keras.layers import Reshape, Activation, Conv2D, Input, MaxPooling2D, BatchNormalization, Flatten, Dense, Lambda
-import os
 import tensorflow as tf
 import numpy as np
-import cv2
-from keras.applications.mobilenet import MobileNet
-import shutil
 from keras.layers.advanced_activations import LeakyReLU
 from keras.layers.merge import concatenate
-from keras.optimizers import SGD, Adam, RMSprop
-from preprocessing import BatchGenerator
-from keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoard
-from utils import BoundBox
-from backend import TinyYoloFeature, FullYoloFeature, MobileNetFeature, SqueezeNetFeature, Inception3Feature
-from keras.utils import multi_gpu_model
-from keras import regularizers
-from utils import WeightReader
-import keras
+
 from frontend import YOLO
 class XiaoYOLO(YOLO):
     def __init__(self, architecture,
