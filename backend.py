@@ -157,11 +157,9 @@ class FullYoloFeature(BaseFeatureExtractor):
         x = BatchNormalization(name='norm_22')(x)
         x = LeakyReLU(alpha=0.1,name='out_22')(x)
 
-        self.features = x
-        self.input = input_image
-        #self.feature_extractor_model = Model(input_image, x)
-        #self.feature_extractor_model.summary()
-
+        self.feature_extractor_model = Model(input_image, x)
+        self.feature_extractor_model.summary()
+        #self.feature_extractor.load_weights(FULL_YOLO_FEATURE_PATH)
 
     def normalize(self, image):
         return image / 255.

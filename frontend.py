@@ -473,7 +473,7 @@ class YOLO(object):
 
         training_save_dir = './traning_results/'
         os.makedirs(training_save_dir,exist_ok=True)
-        result_counter = len([log for log in os.listdir(training_save_dir) if name == log.split('_')[:-1].join('_')]) + 1
+        result_counter = len([log for log in os.listdir(training_save_dir) if name == '_'.join(log.split('_')[:-1])]) + 1
         saved_dir = os.path.join(training_save_dir,name + '_' + str(result_counter))
         os.makedirs(saved_dir, exist_ok=True)
         shutil.copyfile(config_path,os.path.join(saved_dir,'config.json'))
