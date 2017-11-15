@@ -212,7 +212,7 @@ class XiaoYOLO(YOLO):
         x = LeakyReLU(alpha=0.1)(x)
         x = MaxPooling2D(pool_size=(2, 2), name='sub_out_3')(x)
 
-        x = Conv2D(512, (3, 3), strides=(1, 1), padding='same', name='sub_conv_4', use_bias=False)(x)
+        x = Conv2D(1024, (3, 3), strides=(1, 1), padding='same', name='sub_conv_4', use_bias=False)(x)
         x = BatchNormalization(name='sub_norm_4')(x)
         x = LeakyReLU(alpha=0.1)(x)
 
