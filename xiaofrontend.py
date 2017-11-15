@@ -57,7 +57,7 @@ class XiaoYOLO(YOLO):
         x = LeakyReLU(alpha=0.1)(x)
         x = MaxPooling2D(pool_size=(2, 2), name='out_5')(x)
 
-        x_bride = self.sub_layer(x)
+        x_bridge = self.sub_layer(x)
 
         # Layer 6
         x = Conv2D(256, (3, 3), strides=(1, 1), padding='same', name='conv_6', use_bias=False)(x)
@@ -157,7 +157,7 @@ class XiaoYOLO(YOLO):
 
 
         # Layer 23
-        x = x_bride
+        x = x_bridge
         x = Conv2D(self.nb_box * (4 + 1 + self.nb_class), (1, 1), strides=(1, 1), padding='same', name='conv_23a')(x)
         self.grid_h, self.grid_w = x.shape.as_list()[1:3]
         output = Reshape((self.grid_h, self.grid_w, self.nb_box, 4 + 1 + self.nb_class))(x)
@@ -176,6 +176,14 @@ class XiaoYOLO(YOLO):
         new_bias = np.random.normal(size=weights[1].shape) / (self.grid_h * self.grid_w)
 
         layer.set_weights([new_kernel, new_bias])
+
+        for layer in self.model.layers:
+            if layer.name =='conv_23a' or layer.name.startswith('sub'):
+                continue
+            else:
+                print('freeze ' + layer.name)
+                layer.trainable = False
+
 
         # print a summary of the whole model
         self.model.summary()

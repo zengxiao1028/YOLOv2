@@ -1,10 +1,11 @@
 import os
+#os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
+#os.environ["CUDA_VISIBLE_DEVICES"]="0"
 import numpy as np
 from preprocessing import *
 import json
 from sklearn.externals import joblib
-os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-#os.environ["CUDA_VISIBLE_DEVICES"]="0"
+
 from xiaofrontend import XiaoYOLO
 from frontend import YOLO
 def _main_():
