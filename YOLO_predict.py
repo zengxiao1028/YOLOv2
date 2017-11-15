@@ -1,16 +1,14 @@
-import os
-import numpy as np
-from preprocessing import parse_annotation_voc
-from frontend import YOLO
 import json
-import skvideo.io
-import tqdm
+import os
+
 import cv2
-from utils import draw_boxes
+
+from core.preprocessing import parse_annotation_voc
+from core.utils import draw_boxes
+
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
-from moviepy.editor import *
-from xiaofrontend import XiaoYOLO
+from core.xiaofrontend import XiaoYOLO
 from sklearn.externals import joblib
 def _main_():
 

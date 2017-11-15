@@ -8,24 +8,18 @@
 # In[1]:
 import matplotlib
 matplotlib.use('TkAgg')
-from keras.models import Sequential, Model
-from keras.layers import Reshape, Activation, Conv2D, Input, MaxPooling2D, BatchNormalization, Flatten, Dense, Lambda
+from keras.models import Model
+from keras.layers import Reshape, Conv2D, Input, MaxPooling2D, BatchNormalization, Lambda
 from keras.layers.advanced_activations import LeakyReLU
-from keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoard
-from keras.optimizers import SGD, Adam, RMSprop
+from keras.callbacks import EarlyStopping, ModelCheckpoint
+from keras.optimizers import Adam
 from keras.layers.merge import concatenate
 import matplotlib.pyplot as plt
-import keras.backend as K
 import tensorflow as tf
-import imgaug as ia
-from imgaug import augmenters as iaa
-from tqdm import tqdm_notebook
 import numpy as np
-import json
-import pickle
 import os, cv2
-from preprocessing import parse_annotation_voc, BatchGenerator
-from utils import WeightReader, decode_netout, draw_boxes
+from core.preprocessing import parse_annotation_voc, BatchGenerator
+from core.utils import WeightReader, decode_netout, draw_boxes
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"

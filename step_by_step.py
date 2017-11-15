@@ -36,8 +36,8 @@ import tensorflow as tf
 from tqdm import tqdm
 import numpy as np
 import os, cv2
-from preprocessing import parse_annotation_voc, BatchGenerator
-from utils import WeightReader, decode_netout, draw_boxes
+from core.preprocessing import parse_annotation_voc, BatchGenerator
+from core.utils import WeightReader, decode_netout, draw_boxes
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"

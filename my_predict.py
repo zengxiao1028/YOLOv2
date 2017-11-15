@@ -4,20 +4,16 @@ import matplotlib
 matplotlib.use('TkAgg')
 import os
 import cv2
-import numpy as np
-from preprocessing import parse_annotation_voc
-from utils import draw_boxes
-from frontend import YOLO
+from core.utils import draw_boxes
 
 import skvideo.io
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 os.environ["SDL_VIDEO_CENTERED"] = "1"
 from skimage import io
-from matplotlib import pyplot as plt
+
 io.use_plugin('matplotlib')
-from moviepy.editor import *
-from xiaofrontend import XiaoYOLO
+from core.xiaofrontend import XiaoYOLO
 
 def _main_():
 

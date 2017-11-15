@@ -1,11 +1,13 @@
-from keras.models import Model
-from keras.layers import Reshape, Activation, Conv2D, Input, MaxPooling2D, BatchNormalization, Flatten, Dense, Lambda
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
+from keras.layers import Reshape, Conv2D, Input, MaxPooling2D, BatchNormalization, Lambda
 from keras.layers.advanced_activations import LeakyReLU
 from keras.layers.merge import concatenate
+from keras.models import Model
 
-from frontend import YOLO
+from core.frontend import YOLO
+
+
 class XiaoYOLO(YOLO):
     def __init__(self, architecture,
                  input_size,

@@ -1,13 +1,11 @@
-import os
 #os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 #os.environ["CUDA_VISIBLE_DEVICES"]="0"
-import numpy as np
-from preprocessing import *
 import json
-from sklearn.externals import joblib
 
-from xiaofrontend import XiaoYOLO
-from frontend import YOLO
+from core.preprocessing import *
+from core.xiaofrontend import XiaoYOLO
+
+
 def _main_():
 
     config_path = './exp_configs/voc2007_config.json'

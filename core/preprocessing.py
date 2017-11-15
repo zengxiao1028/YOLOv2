@@ -1,14 +1,16 @@
-import os
-import cv2
 import copy
-import numpy as np
-import imgaug as ia
-from imgaug import augmenters as iaa
-import xml.etree.ElementTree as ET
 import csv
-from sklearn.externals import joblib
-from utils import BoundBox, normalize, bbox_iou
+import os
+import xml.etree.ElementTree as ET
+
+import cv2
+import numpy as np
+from imgaug import augmenters as iaa
 from keras.utils import Sequence
+from sklearn.externals import joblib
+
+from core.utils import BoundBox, bbox_iou
+
 
 def parse_annotation_voc(ann_dir, img_dir, labels=[]):
     all_imgs, seen_labels = parse_annotation(ann_dir,img_dir,labels)

@@ -1,11 +1,10 @@
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
-from frontend import YOLO
 import json
-from xiaofrontend import XiaoYOLO
+from core.xiaofrontend import XiaoYOLO
 
-from preprocessing import *
+from core.preprocessing import *
 from sklearn.externals import joblib
 from metric import evaluator
 def _main_():
