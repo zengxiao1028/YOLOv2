@@ -12,7 +12,7 @@ from core.xiaofrontend import XiaoYOLO
 from sklearn.externals import joblib
 def _main_():
 
-    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_voc2007_7'
+    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_voc2007_8'
     #training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_imagenetvid_7'
     #training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_caltech_2'
 
@@ -43,7 +43,8 @@ def _main_():
 
     if os.path.exists(validation_model_path):
         print("Loading pre-trained weights in", validation_model_path)
-        yolo.load_weights(validation_model_path)
+        #yolo.load_weights(validation_model_path)
+        yolo.load_model(validation_model_path)
 
 
     ###############################
@@ -59,7 +60,7 @@ def _main_():
 
     for sample in valid_imgs:
         image = cv2.imread(sample['filename'])
-        boxes = yolo.predict(image, 0.5, 0.5)
+        boxes = yolo.predict(image, 0.3, 0.3)
 
         image = draw_boxes(image, boxes, labels=config['model']['labels'])
 

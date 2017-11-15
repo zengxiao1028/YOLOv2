@@ -51,8 +51,8 @@ class PeriodicSaver(Callback):
         self.N = N
 
     def on_epoch_end(self, epoch, logs=None):
-        if epoch % self.N == 0:
-            name = self.save_path % self.batch
+        if (epoch+1) % self.N == 0:
+            name = self.save_path % epoch
             self.model.save(name)
 
 def normalize(image):

@@ -9,7 +9,7 @@ from sklearn.externals import joblib
 from metric import evaluator
 def _main_():
 
-    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_voc2007_7'
+    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_voc2007_8'
     #training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_imagenetvid_4'
     gen_dataset = parse_annotation_voc
     best_only = False
@@ -37,7 +37,7 @@ def _main_():
     validation_model_path = os.path.join(training_result_folder, model_path)
     if os.path.exists(validation_model_path):
         print("Loading pre-trained weights in", validation_model_path)
-        yolo.load_weights(validation_model_path)
+        yolo.load_weights('/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_voc2007_8/full_yolo_024.h5')
     else:
         raise FileNotFoundError('cannot find model: %s' % validation_model_path)
 

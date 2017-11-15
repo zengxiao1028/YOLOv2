@@ -14,7 +14,7 @@ from core.utils import PeriodicSaver
 from core.backend import TinyYoloFeature, FullYoloFeature, MobileNetFeature, SqueezeNetFeature, Inception3Feature
 from core.preprocessing import BatchGenerator
 from core.utils import BoundBox
-
+from keras.models import load_model
 
 class YOLO(object):
 
@@ -272,7 +272,8 @@ class YOLO(object):
 
         self.model.load_weights(weight_path,by_name=True)
 
-
+    def load_model(self, model_path):
+        self.model = load_model(model_path)
 
     def freeze_layers(self, to_layer):
 
