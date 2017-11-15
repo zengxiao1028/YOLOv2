@@ -497,6 +497,7 @@ class YOLO(object):
                                   histogram_freq=0,
                                   write_graph=True,
                                   write_images=False)
+
         periodic_saver = PeriodicSaver(self.model.callback_model,
                                        os.path.join(saved_dir, saved_weights_name)[:-3] + '_%03d.h5' ,N=5)
 
