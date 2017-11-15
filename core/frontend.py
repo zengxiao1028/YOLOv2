@@ -10,7 +10,7 @@ from keras.layers import Reshape, Conv2D, Input, Lambda
 from keras.models import Model
 from keras.optimizers import Adam
 from keras.utils import multi_gpu_model
-
+from core.utils import PeriodicSaver
 from core.backend import TinyYoloFeature, FullYoloFeature, MobileNetFeature, SqueezeNetFeature, Inception3Feature
 from core.preprocessing import BatchGenerator
 from core.utils import BoundBox
@@ -497,6 +497,8 @@ class YOLO(object):
                                   histogram_freq=0,
                                   write_graph=True,
                                   write_images=False)
+        periodic_saver = PeriodicSaver(self.model.callback_model,
+                                       os.path.join(saved_dir, saved_weights_name)[:-3] + '_%03d.h5' ,N=5)
 
 
         ############################################
@@ -507,6 +509,6 @@ class YOLO(object):
                                  epochs           = nb_epoch,
                                  validation_data  = valid_batch,
                                  validation_steps = len(valid_batch) * valid_times,
-                                 callbacks        = [best_checkpoint, checkpoint, tensorboard],
+                                 callbacks        = [best_checkpoint, checkpoint, tensorboard, periodic_saver],
                                  workers = 4,
                                  max_queue_size   = 32)

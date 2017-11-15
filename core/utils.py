@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 import tensorflow as tf
 import copy
 import cv2
-
+from keras.callbacks import Callback
 class BoundBox:
     def __init__(self, x, y, w, h, c = None, classes = None):
         self.x     = x
@@ -34,13 +34,26 @@ class WeightReader:
     def __init__(self, weight_file):
         self.offset = 4
         self.all_weights = np.fromfile(weight_file, dtype='float32')
-        
+
     def read_bytes(self, size):
         self.offset = self.offset + size
         return self.all_weights[self.offset-size:self.offset]
-    
+
     def reset(self):
         self.offset = 4
+
+
+class PeriodicSaver(Callback):
+
+    def __init__(self, model, save_path, N=5):
+        self.model = model
+        self.save_path = save_path # 'weights%08d.h5'
+        self.N = N
+
+    def on_epoch_end(self, epoch, logs=None):
+        if epoch % self.N == 0:
+            name = self.save_path % self.batch
+            self.model.save(name)
 
 def normalize(image):
     image = image / 255.
