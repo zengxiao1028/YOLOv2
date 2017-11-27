@@ -1,13 +1,14 @@
 import json
 import os
+os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 from core.frontend import YOLO
 import cv2
 
 from core.preprocessing import parse_annotation_voc
 from core.utils import draw_boxes
 
-os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+
 from core.xiaofrontend import XiaoYOLO
 from sklearn.externals import joblib
 def _main_():
