@@ -4,11 +4,11 @@ import json
 
 from core.preprocessing import *
 from core.xiaofrontend import XiaoYOLO
-
+from core.frontend import YOLO
 
 def _main_():
 
-    config_path = './exp_configs/voc2007_config.json'
+    config_path = './exp_configs/meal_config.json'
     gen_dataset_fn =parse_annotation_voc
 
 
@@ -51,7 +51,7 @@ def _main_():
     ###############################
     #   Construct the model 
     ###############################
-    yolo = XiaoYOLO.init_from_config(config)
+    yolo = YOLO.init_from_config(config)
 
     ###############################
     #   Load the pretrained weights (if any) 

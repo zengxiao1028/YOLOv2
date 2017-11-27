@@ -8,7 +8,7 @@ import numpy as np
 from imgaug import augmenters as iaa
 from keras.utils import Sequence
 from sklearn.externals import joblib
-
+import sys
 from core.utils import BoundBox, bbox_iou
 
 
@@ -98,11 +98,11 @@ def parse_annotation(ann_dir, img_dir, labels=[]):
             continue
         img = {'object': []}
 
-        tree = ET.parse(ann_dir + ann)
+        tree = ET.parse(os.path.join( ann_dir,ann))
 
         for elem in tree.iter():
             if 'filename' in elem.tag:
-                img['filename'] = img_dir + elem.text
+                img['filename'] = os.path.join( img_dir, elem.text)
             if 'width' in elem.tag:
                 img['width'] = int(elem.text)
             if 'height' in elem.tag:
@@ -139,6 +139,7 @@ def parse_annotation(ann_dir, img_dir, labels=[]):
             all_imgs += [img]
 
     return all_imgs, seen_labels
+
 
 
 class BatchGenerator(Sequence):
@@ -329,8 +330,13 @@ class BatchGenerator(Sequence):
 
     def aug_image(self, train_instance, jitter):
         image_name = train_instance['filename']
-        image = cv2.imread(image_name)
-        h, w, c = image.shape
+        try:
+            image = cv2.imread(image_name)
+            h, w, c = image.shape
+        except:
+            print('Error loading %s' % image_name)
+            sys.exit(1)
+
 
         all_objs = copy.deepcopy(train_instance['object'])
 
@@ -394,3 +400,4 @@ if __name__ == '__main__':
 
         print(len(all_imgs))
         print(len(seen_labels),seen_labels)
+

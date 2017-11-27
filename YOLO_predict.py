@@ -1,6 +1,6 @@
 import json
 import os
-
+from core.frontend import YOLO
 import cv2
 
 from core.preprocessing import parse_annotation_voc
@@ -12,7 +12,7 @@ from core.xiaofrontend import XiaoYOLO
 from sklearn.externals import joblib
 def _main_():
 
-    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_voc2007_8'
+    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_meal_1'
     #training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_imagenetvid_7'
     #training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_caltech_2'
 
@@ -35,7 +35,7 @@ def _main_():
     #   Construct the model
     ###############################
 
-    yolo = XiaoYOLO.init_from_config(config)
+    yolo = YOLO.init_from_config(config)
 
     ###############################
     #   Load the pretrained weights (if any)
@@ -43,8 +43,8 @@ def _main_():
 
     if os.path.exists(validation_model_path):
         print("Loading pre-trained weights in", validation_model_path)
-        #yolo.load_weights(validation_model_path)
-        yolo.load_model(validation_model_path)
+        yolo.load_weights(validation_model_path)
+        #yolo.load_model(validation_model_path)
 
 
     ###############################
