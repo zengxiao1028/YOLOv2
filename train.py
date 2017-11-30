@@ -1,5 +1,6 @@
-#os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-#os.environ["CUDA_VISIBLE_DEVICES"]="0"
+import os
+os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"]="1,2"
 import json
 
 from core.preprocessing import *
@@ -9,7 +10,7 @@ from core.frontend import YOLO
 def _main_():
 
     config_path = './exp_configs/meal_config.json'
-    gen_dataset_fn =parse_annotation_voc
+    gen_dataset_fn = parse_annotation_voc
 
 
 
@@ -86,7 +87,7 @@ def _main_():
                saved_weights_name = config['train']['saved_weights_name'],
                name               = config['train']['name'],
                debug              = config['train']['debug'],
-               nb_gpus            = 3 )
+               nb_gpus            = 2 )
 
 if __name__ == '__main__':
 

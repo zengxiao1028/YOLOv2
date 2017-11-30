@@ -13,7 +13,7 @@ from core.xiaofrontend import XiaoYOLO
 from sklearn.externals import joblib
 def _main_():
 
-    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_meal_1'
+    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_meal_6'
     #training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_imagenetvid_7'
     #training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_caltech_2'
 
@@ -61,7 +61,7 @@ def _main_():
 
     for sample in valid_imgs:
         image = cv2.imread(sample['filename'])
-        boxes = yolo.predict(image, 0.3, 0.3)
+        boxes = yolo.predict(image, obj_threshold=0.2, nms_threshold=0.3)
 
         image = draw_boxes(image, boxes, labels=config['model']['labels'])
 

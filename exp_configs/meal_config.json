@@ -14,7 +14,7 @@
         "train_annot_file"  :   "/home/xiao/video_project/YOLOv2/dataset/meal_dataset/train.pkl",
         "train_times":          5,
         "pretrained_weights":   "./pretrain_models/yolo.weights.h5",
-        "batch_size":           48,
+        "batch_size":           32,
         "learning_rate":        1e-4,
         "nb_epoch":             100,
         "warmup_batches"    :   0,
