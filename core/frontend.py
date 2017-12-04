@@ -389,6 +389,17 @@ class YOLO(object):
     def sigmoid(self, x):
         return 1. / (1. + np.exp(-x))
 
+    # def sigmoid(self,x):
+    #     "Numerically-stable sigmoid function."
+    #     if x >= 0:
+    #         z = np.exp(-x)
+    #         return 1 / (1 + z)
+    #     else:
+    #         # if x is less than zero then z will be small, denom can't be
+    #         # zero because it's 1+z.
+    #         z = np.exp(x)
+    #         return z / (1 + z)
+
     def softmax(self, x, axis=-1, t=-100.):
         x = x - np.max(x)
         
@@ -499,7 +510,7 @@ class YOLO(object):
                                   write_graph=True,
                                   write_images=False)
 
-        periodic_saver = PeriodicSaver(self.model.callback_model,
+        periodic_saver = PeriodicSaver(self.model.callback_model if nb_gpus >1 else self.model,
                                        os.path.join(saved_dir, saved_weights_name)[:-3] + '_%03d.h5' ,N=5)
 
 

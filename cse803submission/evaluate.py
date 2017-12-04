@@ -1,10 +1,13 @@
-import numpy as np
 import os
+os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"]="2"
 import cv2
+from core.utils import draw_boxes
 from core.frontend import YOLO
 import json
 from collections import defaultdict
-def main(eval_folder='./imaged_tryout', online_prediction=False):
+from keras.preprocessing.image import load_img
+def main(eval_folder='/home/xiao/video_project/YOLOv2/cse803submission/imaged_tryout', online_prediction=False):
 
 
     labels = ["apple", "banana", "broccoli", "burger", "cookie", "egg", "frenchfry", "hotdog", "pasta", "pizza", "rice", "salad", "strawberry", "tomato"]
@@ -21,18 +24,39 @@ def main(eval_folder='./imaged_tryout', online_prediction=False):
         ground_truth_dict = { line.split(' ')[0]:line.split(' ')[1:] for line in lines }
 
     if online_prediction:
-        training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_meal_6'
+        training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_meal_7'
         config_path = os.path.join(training_result_folder, 'config.json')
         with open(config_path) as config_buffer:
             config = json.load(config_buffer)
         yolo = YOLO.init_from_config(config)
+        validation_model_path = os.path.join(training_result_folder, config['train']['saved_weights_name'])
+        if os.path.exists(validation_model_path):
+            print("Loading pre-trained weights in", validation_model_path)
+            yolo.load_weights(validation_model_path)
+
         results_dict = dict()
         for k, v in ground_truth_dict.items():
-            img = cv2.imread(os.path.join(eval_folder,k))
+            if os.path.exists(os.path.join(eval_folder,k)) is False:
+                k1 = k[:-3] + 'JPG'
+            # img = load_img(os.path.join(eval_folder,k1))
+            # img = np.array(img)
+            # img = img[...,::-1]
+            else:
+                k1 = k
+            img = cv2.imread(os.path.join(eval_folder,k1))
+            if img is None:
+                print('Evaluating %s' % os.path.join(eval_folder, k))
+                print(img.shape)
+
             # get predictions
-            boxes = yolo.predict(img, obj_threshold=0.1, nms_threshold=0.3)
+            boxes = yolo.predict(img, obj_threshold=0.01, nms_threshold=0.3)
             # filter
             predictions = filter_prediction(boxes, 0.5)
+
+            #visualize it
+            image = draw_boxes(img, predictions, labels=config['model']['labels'])
+            cv2.imwrite(os.path.join(eval_folder,k[:-4]+'_out.jpg'),image)
+
             # transform output to labels
             predictions = [labels[prediction.get_label()] for prediction in predictions]
             results_dict[k] = predictions
@@ -71,7 +95,8 @@ def main(eval_folder='./imaged_tryout', online_prediction=False):
 
     for cls, tp in tp_dict.items():
         # compute detection rate
-        p_images = len([ k for k, v in ground_truth_dict.items() if cls in v ])
+        cls_images= [ k for k, v in ground_truth_dict.items() if cls in v ]
+        p_images = len(cls_images)
         detection_rate = tp * 1.0 / p_images
 
         n_images = len(ground_truth_dict.items()) - p_images
@@ -94,4 +119,4 @@ def filter_prediction(boxes, sub_threshold = 0.5):
     return predictions
 
 if __name__ == '__main__':
-    main()
+    main(online_prediction=True)
