@@ -1,0 +1,50 @@
+current
+salad : detection rate: 0.91, reject rate:  0.97, recogntion rate 0.94
+pasta : detection rate: 0.71, reject rate:  0.97, recogntion rate 0.84
+hotdog : detection rate: 1.00, reject rate:  1.00, recogntion rate 1.00
+frenchfry : detection rate: 0.72, reject rate:  1.00, recogntion rate 0.86
+burger : detection rate: 0.73, reject rate:  1.00, recogntion rate 0.86
+apple : detection rate: 0.95, reject rate:  0.99, recogntion rate 0.97
+banana : detection rate: 1.00, reject rate:  0.98, recogntion rate 0.99
+broccoli : detection rate: 1.00, reject rate:  1.00, recogntion rate 1.00
+pizza : detection rate: 0.91, reject rate:  0.99, recogntion rate 0.95
+egg : detection rate: 0.67, reject rate:  0.96, recogntion rate 0.81
+tomato : detection rate: 0.50, reject rate:  1.00, recogntion rate 0.75
+rice : detection rate: 1.00, reject rate:  0.99, recogntion rate 0.99
+strawberry : detection rate: 0.90, reject rate:  0.99, recogntion rate 0.95
+cookie : detection rate: 0.94, reject rate:  0.99, recogntion rate 0.97
+0.92066885603 12.8893639844
+
+099
+salad : detection rate: 0.91, reject rate:  0.97, recogntion rate 0.94
+pasta : detection rate: 0.71, reject rate:  0.97, recogntion rate 0.84
+hotdog : detection rate: 1.00, reject rate:  1.00, recogntion rate 1.00
+frenchfry : detection rate: 0.72, reject rate:  1.00, recogntion rate 0.86
+burger : detection rate: 0.73, reject rate:  1.00, recogntion rate 0.86
+apple : detection rate: 0.95, reject rate:  0.99, recogntion rate 0.97
+banana : detection rate: 1.00, reject rate:  0.98, recogntion rate 0.99
+broccoli : detection rate: 1.00, reject rate:  1.00, recogntion rate 1.00
+pizza : detection rate: 0.91, reject rate:  0.99, recogntion rate 0.95
+egg : detection rate: 0.67, reject rate:  0.96, recogntion rate 0.81
+tomato : detection rate: 0.50, reject rate:  1.00, recogntion rate 0.75
+rice : detection rate: 1.00, reject rate:  0.99, recogntion rate 0.99
+strawberry : detection rate: 0.90, reject rate:  0.99, recogntion rate 0.95
+cookie : detection rate: 0.94, reject rate:  0.99, recogntion rate 0.97
+0.92066885603 12.8893639844
+
+094
+salad : detection rate: 0.95, reject rate:  0.95, recogntion rate 0.95
+pasta : detection rate: 0.57, reject rate:  0.98, recogntion rate 0.78
+hotdog : detection rate: 1.00, reject rate:  0.99, recogntion rate 1.00
+frenchfry : detection rate: 0.78, reject rate:  1.00, recogntion rate 0.89
+burger : detection rate: 0.77, reject rate:  1.00, recogntion rate 0.89
+apple : detection rate: 0.95, reject rate:  0.99, recogntion rate 0.97
+banana : detection rate: 1.00, reject rate:  0.99, recogntion rate 1.00
+broccoli : detection rate: 1.00, reject rate:  1.00, recogntion rate 1.00
+pizza : detection rate: 0.91, reject rate:  0.98, recogntion rate 0.95
+egg : detection rate: 0.58, reject rate:  0.97, recogntion rate 0.78
+tomato : detection rate: 0.50, reject rate:  1.00, recogntion rate 0.75
+rice : detection rate: 1.00, reject rate:  0.95, recogntion rate 0.98
+strawberry : detection rate: 0.90, reject rate:  0.99, recogntion rate 0.94
+cookie : detection rate: 0.89, reject rate:  1.00, recogntion rate 0.94
+0.914607695409 12.8045077357

@@ -1,13 +1,14 @@
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"]="2"
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 import cv2
+import numpy as np
 from core.utils import draw_boxes
 from core.frontend import YOLO
 import json
 from collections import defaultdict
 from keras.preprocessing.image import load_img
-def main(eval_folder='/home/xiao/video_project/YOLOv2/cse803submission/imaged_tryout', online_prediction=False):
+def main(eval_folder='/home/xiao/video_project/YOLOv2/cse803submission/image_comdata', online_prediction=False):
 
 
     labels = ["apple", "banana", "broccoli", "burger", "cookie", "egg", "frenchfry", "hotdog", "pasta", "pizza", "rice", "salad", "strawberry", "tomato"]
@@ -24,12 +25,14 @@ def main(eval_folder='/home/xiao/video_project/YOLOv2/cse803submission/imaged_tr
         ground_truth_dict = { line.split(' ')[0]:line.split(' ')[1:] for line in lines }
 
     if online_prediction:
-        training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_meal_7'
+        training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_meal_8'
         config_path = os.path.join(training_result_folder, 'config.json')
         with open(config_path) as config_buffer:
             config = json.load(config_buffer)
         yolo = YOLO.init_from_config(config)
-        validation_model_path = os.path.join(training_result_folder, config['train']['saved_weights_name'])
+        #validation_model_path = os.path.join(training_result_folder, config['train']['saved_weights_name'])
+        validation_model_path = os.path.join(training_result_folder, 'best_full_yolo.h5')
+        #validation_model_path = os.path.join(training_result_folder, 'full_yolo_014.h5')
         if os.path.exists(validation_model_path):
             print("Loading pre-trained weights in", validation_model_path)
             yolo.load_weights(validation_model_path)
@@ -51,11 +54,11 @@ def main(eval_folder='/home/xiao/video_project/YOLOv2/cse803submission/imaged_tr
             # get predictions
             boxes = yolo.predict(img, obj_threshold=0.01, nms_threshold=0.3)
             # filter
-            predictions = filter_prediction(boxes, 0.5)
+            predictions = filter_prediction(boxes, 0.35)
 
             #visualize it
             image = draw_boxes(img, predictions, labels=config['model']['labels'])
-            cv2.imwrite(os.path.join(eval_folder,k[:-4]+'_out.jpg'),image)
+            cv2.imwrite(os.path.join(os.path.join(eval_folder,'prediction'),k[:-4]+'_out.jpg'),image)
 
             # transform output to labels
             predictions = [labels[prediction.get_label()] for prediction in predictions]
@@ -93,16 +96,22 @@ def main(eval_folder='/home/xiao/video_project/YOLOv2/cse803submission/imaged_tr
             else:
                 fp_dict[l2] = fp_dict[l2] + 1
 
-    for cls, tp in tp_dict.items():
+
+    items = ['salad','pasta','hotdog','frenchfry','burger','apple','banana','broccoli','pizza','egg','tomato','rice','strawberry','cookie']
+    recognition_rates = []
+    for cls in items:
         # compute detection rate
         cls_images= [ k for k, v in ground_truth_dict.items() if cls in v ]
         p_images = len(cls_images)
-        detection_rate = tp * 1.0 / p_images
+        detection_rate = tp_dict[cls] * 1.0 / p_images
 
         n_images = len(ground_truth_dict.items()) - p_images
         rejection_rate = 1 - fp_dict[cls] * 1.0 / n_images
         print('%s : detection rate: %.2f, reject rate: % 0.2f, recogntion rate %.2f '
               % (cls,detection_rate,rejection_rate,(detection_rate+rejection_rate)/2.))
+        recognition_rates.append((detection_rate+rejection_rate)/2.)
+
+    print(np.mean(recognition_rates),np.sum(recognition_rates))
 
 
 def filter_prediction(boxes, sub_threshold = 0.5):
