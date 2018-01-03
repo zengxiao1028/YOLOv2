@@ -140,7 +140,7 @@ def _main_():
         for box in boxes:
 
             xmin = int((box.x - box.w * 1.1 / 2) * image.shape[1])
-            xmax = int((box.x + box.w * 1.0 / 2) * image.shape[1])
+            xmax = int((box.x + box.w * 0.5 / 2) * image.shape[1])
             ymin = int((box.y - box.h * 1.0 / 2) * image.shape[0])
             ymax = int((box.y + box.h * 1.0 / 2) * image.shape[0])
 
