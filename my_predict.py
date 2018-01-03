@@ -1,15 +1,16 @@
 #! /usr/bin/env python
-
+import os
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+os.environ["SDL_VIDEO_CENTERED"] = "1"
 import matplotlib
 matplotlib.use('TkAgg')
-import os
+
 import cv2
 from core.utils import draw_boxes
 
 import skvideo.io
-os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = ""
-os.environ["SDL_VIDEO_CENTERED"] = "1"
+
 from skimage import io
 
 io.use_plugin('matplotlib')
@@ -111,19 +112,39 @@ def _main_():
     video_inp = '/home/xiao/Downloads/cap.mp4'
     videogen = skvideo.io.vreader(video_inp)
     outputdata = []
+    # for image in videogen:
+    #     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    #     boxes = yolo.predict(image,obj_threshold=0.2, nms_threshold=0.5)
+    #
+    #     #filter person out
+    #     boxes = [box for box in boxes if box.get_label()==0]
+    #
+    #     image = draw_boxes(image, boxes, labels=LABELS)
+    #
+    #     cv2.imshow('image', image)
+    #     cv2.waitKey(1)
+    #     outputdata.append(image)
+
+    i = 0
     for image in videogen:
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        boxes = yolo.predict(image,obj_threshold=0.2, nms_threshold=0.5)
+        boxes = yolo.predict(image, obj_threshold=0.2, nms_threshold=0.5)
 
-        #filter person out
-        boxes = [box for box in boxes if box.get_label()==0]
+        # filter person out
+        boxes = [box for box in boxes if box.get_label() == 0]
 
-        image = draw_boxes(image, boxes, labels=LABELS)
+        #image = draw_boxes(image, boxes, labels=LABELS)
 
-        cv2.imshow('image', image)
-        cv2.waitKey(1)
-        outputdata.append(image)
 
+
+        for box in boxes:
+            xmin = int((box.x - box.w*1.1 / 2) * image.shape[1])
+            xmax = int((box.x + box.w*1.1 / 2) * image.shape[1])
+            ymin = int((box.y - box.h*1.1 / 2) * image.shape[0])
+            ymax = int((box.y + box.h*1.1 / 2) * image.shape[0])
+
+            cv2.imwrite('/home/xiao/Cap/imgs/{:d}.jpg'.format(i),image[ymin:ymax, xmin:xmax, :])
+            i += 1
 
 
 if __name__ == '__main__':
