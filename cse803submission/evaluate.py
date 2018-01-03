@@ -1,11 +1,12 @@
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"]="1"
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
 import cv2
 import numpy as np
 from core.utils import draw_boxes
 from core.frontend import YOLO
 import json
+import time
 from collections import defaultdict
 from keras.preprocessing.image import load_img
 def main(eval_folder='/home/xiao/video_project/YOLOv2/cse803submission/image_comdata', online_prediction=False):
@@ -38,6 +39,7 @@ def main(eval_folder='/home/xiao/video_project/YOLOv2/cse803submission/image_com
             yolo.load_weights(validation_model_path)
 
         results_dict = dict()
+        time_used = []
         for k, v in ground_truth_dict.items():
             if os.path.exists(os.path.join(eval_folder,k)) is False:
                 k1 = k[:-3] + 'JPG'
@@ -52,7 +54,10 @@ def main(eval_folder='/home/xiao/video_project/YOLOv2/cse803submission/image_com
                 print(img.shape)
 
             # get predictions
+            time1 = time.time()
             boxes = yolo.predict(img, obj_threshold=0.01, nms_threshold=0.3)
+            time2 = time.time()
+            time_used.append(time2-time1)
             # filter
             predictions = filter_prediction(boxes, 0.35)
 
@@ -69,6 +74,7 @@ def main(eval_folder='/home/xiao/video_project/YOLOv2/cse803submission/image_com
             lines = f.read().splitlines()
             results_dict = { line.split(' ')[0]:line.split(' ')[1:] for line in lines }
 
+    print('average_time:', np.mean(time_used))
     #compute recogntion rate = 0.5 * (detection rate + rejection rate)
     tp_dict = defaultdict(int)
 

@@ -14,7 +14,7 @@ from skimage import io
 
 io.use_plugin('matplotlib')
 from core.xiaofrontend import XiaoYOLO
-
+from core.frontend import YOLO
 def _main_():
 
     LABELS = ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light',
@@ -38,7 +38,7 @@ def _main_():
     #   Make the model
     ###############################
 
-    yolo = XiaoYOLO(architecture='Full Yolo',
+    yolo = YOLO(architecture='Full Yolo',
                 input_size=416,
                 labels=LABELS,
                 max_box_per_image=5,
@@ -108,12 +108,15 @@ def _main_():
     #     outputdata.append(image)
     #
     # bike
-    video_inp = '/data/xiao/imagenet/ILSVRC/Data/VID/snippets/val/ILSVRC2015_val_00041008.mp4'
+    video_inp = '/home/xiao/Downloads/cap.mp4'
     videogen = skvideo.io.vreader(video_inp)
     outputdata = []
     for image in videogen:
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        boxes = yolo.predict(image)
+        boxes = yolo.predict(image,obj_threshold=0.2, nms_threshold=0.5)
+
+        #filter person out
+        boxes = [box for box in boxes if box.get_label()==0]
 
         image = draw_boxes(image, boxes, labels=LABELS)
 
