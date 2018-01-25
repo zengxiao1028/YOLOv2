@@ -9,7 +9,7 @@ from core.frontend import YOLO
 
 def _main_():
 
-    config_path = './exp_configs/meal_config.json'
+    config_path = './exp_configs/cap_config.json'
     gen_dataset_fn = parse_annotation_voc
 
 

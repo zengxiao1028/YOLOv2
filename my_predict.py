@@ -71,7 +71,7 @@ def main_1():
     video_inp = '/data/xiao/imagenet/ILSVRC/Data/VID/snippets/val/ILSVRC2015_val_00143003.mp4'
 
     # cap
-    video_inp = '/home/xiao/Downloads/cap.mp4'
+    video_inp = '/home/xiao/Downloads/cap3.avi'
     videogen = skvideo.io.vreader(video_inp)
     outputdata = []
     for image in videogen:
@@ -83,9 +83,14 @@ def main_1():
 
         image = draw_boxes(image, boxes, labels=LABELS)
 
-        cv2.imshow('image', image)
-        cv2.waitKey(1)
+        #cv2.imshow('image', image)
+        #cv2.waitKey(1)
+        image = cv2.resize(image,(0,0),fx=0.5,fy=0.5)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
         outputdata.append(image)
+
+    skvideo.io.vwrite("/home/xiao/Cap/cap3.mp4",outputdata)
 
 
 def _main_():
@@ -126,44 +131,46 @@ def _main_():
 
     # bike
     video_inp = '/home/xiao/Downloads/cap.mp4'
-    videogen = skvideo.io.vreader(video_inp)
+    videogen = skvideo.io.vreader(video_inp,outputdict={'-r': '10'})
+    #videogen = skvideo.io.vreader(video_inp)
 
     i = 0
-    for image in videogen:
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        boxes = yolo.predict(image, obj_threshold=0.2, nms_threshold=0.5)
+    for idx,image in enumerate(videogen):
 
-        # filter person out
-        boxes = [box for box in boxes if box.get_label() == 0]
+            image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+            boxes = yolo.predict(image, obj_threshold=0.2, nms_threshold=0.5)
+
+            # filter person out
+            boxes = [box for box in boxes if box.get_label() == 0]
 
 
-        for box in boxes:
+            for box in boxes:
 
-            xmin = int((box.x - box.w * 1.1 / 2) * image.shape[1])
-            xmax = int((box.x + box.w * 0.5 / 2) * image.shape[1])
-            ymin = int((box.y - box.h * 1.0 / 2) * image.shape[0])
-            ymax = int((box.y + box.h * 1.0 / 2) * image.shape[0])
+                xmin = int((box.x - box.w * 1.0 / 2) * image.shape[1])
+                xmax = int((box.x + box.w * 1.0 / 2) * image.shape[1])
+                ymin = int((box.y - box.h * 1.2 / 2) * image.shape[0])
+                ymax = int((box.y + box.h * 0.5 / 2) * image.shape[0])
 
-            #square
-            # length = max(box.w/2*image.shape[1], box.h/2*image.shape[0])
-            # xmin = int(box.x  * image.shape[1] - length)
-            # xmax = int(box.x  * image.shape[1] + length)
-            # ymin = int(box.y  * image.shape[0] - length)
-            # ymax = int(box.y  * image.shape[0] + length)
+                #square
+                # length = max(box.w/2*image.shape[1], box.h/2*image.shape[0])
+                # xmin = int(box.x  * image.shape[1] - length)
+                # xmax = int(box.x  * image.shape[1] + length)
+                # ymin = int(box.y  * image.shape[0] - length)
+                # ymax = int(box.y  * image.shape[0] + length)
 
-            xmin = max(0, xmin)
-            xmax = max(0, xmax)
-            ymin = max(0, ymin)
-            ymax = max(0, ymax)
+                xmin = max(0, xmin)
+                xmax = max(0, xmax)
+                ymin = max(0, ymin)
+                ymax = max(0, ymax)
 
-            xmin = min(image.shape[1] - 1, xmin)
-            xmax = min(image.shape[1] - 1, xmax)
-            ymin = min(image.shape[0] - 1, ymin)
-            ymax = min(image.shape[0] - 1, ymax)
+                xmin = min(image.shape[1] - 1, xmin)
+                xmax = min(image.shape[1] - 1, xmax)
+                ymin = min(image.shape[0] - 1, ymin)
+                ymax = min(image.shape[0] - 1, ymax)
 
-            cv2.imwrite('/home/xiao/Cap/imgs/{:d}.jpg'.format(i),image[ymin:ymax, xmin:xmax, :])
-            i += 1
+                cv2.imwrite('/home/xiao/Cap/imgs/{:d}.jpg'.format(i),image[ymin:ymax, xmin:xmax, :])
+                i += 1
 
 
 if __name__ == '__main__':
-    _main_()
+    main_1()
