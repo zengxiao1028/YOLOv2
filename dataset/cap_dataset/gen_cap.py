@@ -15,6 +15,7 @@ def main():
     video_files = os.listdir(video_folder)
     for file in video_files:
         gt_file = file[:-4] + '.txt'
+        gt_path = os.path.join(label_folder,gt_file)
         video_path = os.path
         videogen = skvideo.io.vreader(video_inp)
         #get gt
