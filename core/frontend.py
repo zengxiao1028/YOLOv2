@@ -93,7 +93,7 @@ class YOLO(object):
 
         yolo = cls(architecture=config['model']['architecture'],
                    input_size=config['model']['input_size'],
-                   labels=config['model']['labels'],
+                   labels=sorted(config['model']['labels']),
                    max_box_per_image=config['model']['max_box_per_image'],
                    anchors=config['model']['anchors'],
                    obj_threshold=config["valid"]["obj_threshold"],
@@ -287,7 +287,7 @@ class YOLO(object):
     def normalize(self,image):
         return self.feature_extractor.normalize(image)
 
-    def predict(self, image,obj_threshold=0.3, nms_threshold=0.3):
+    def predict(self, image, obj_threshold=0.3, nms_threshold=0.3, filter_classes = None):
         image = cv2.resize(image, (self.input_size, self.input_size))
         image = self.normalize(image)
 
@@ -296,7 +296,7 @@ class YOLO(object):
         dummy_array = dummy_array = np.zeros((1,1,1,1,self.max_box_per_image,4))
 
         netout = self.model.predict([input_image, dummy_array])[0]
-        boxes  = self.decode_netout(netout, obj_threshold, nms_threshold)
+        boxes  = self.decode_netout(netout, obj_threshold, nms_threshold,filter_classes)
         
         return boxes
 
@@ -335,7 +335,7 @@ class YOLO(object):
             else:
                 return min(x2,x4) - x3          
 
-    def decode_netout(self, netout, obj_threshold=0.3, nms_threshold=0.3):
+    def decode_netout(self, netout, obj_threshold=0.3, nms_threshold=0.3, filter_classes = None):
         grid_h, grid_w, nb_box = netout.shape[:3]
 
         boxes = []
@@ -350,8 +350,13 @@ class YOLO(object):
                 for b in range(nb_box):
                     # from 4th element onwards are confidence and class classes
                     classes = netout[row,col,b,5:]
-                    
-                    if np.sum(classes) > 0:
+
+                    if np.sum(classes) > 0 :
+
+                        #skip filter_classes
+                        if filter_classes is not None and self.labels[np.argmax(classes)] in filter_classes:
+                            continue
+
                         # first 4 elements are x, y, w, and h
                         x, y, w, h = netout[row,col,b,:4]
 
@@ -362,7 +367,7 @@ class YOLO(object):
                         confidence = netout[row,col,b,4]
                         
                         box = BoundBox(x, y, w, h, confidence, classes)
-                        
+
                         boxes.append(box)
 
         # suppress non-maximal boxes

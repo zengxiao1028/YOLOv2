@@ -106,9 +106,9 @@ def draw_boxes(image, boxes, labels):
         cv2.rectangle(image, (xmin,ymin), (xmax,ymax), (0,255,0), 3)
         cv2.putText(image, 
                     labels[box.get_label()] + ' {:.2f}'.format(box.get_score()),
-                    (xmin + 5, ymin + 15),
+                    (xmin + 5, ymin - 15),
                     cv2.FONT_HERSHEY_SIMPLEX, 
-                    2e-3 * (ymax-ymin),
+                    8e-3 * (ymax-ymin),
                     (0,255,0), 1)
         
     return image        

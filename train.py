@@ -1,6 +1,6 @@
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"]="1,2"
+os.environ["CUDA_VISIBLE_DEVICES"]="0,2"
 import json
 
 from core.preprocessing import *
@@ -40,15 +40,13 @@ def _main_():
                                                         config['valid']['valid_image_folder'],
                                                         config['model']['labels'])
     else:
-        train_valid_split = int(0.98*len(train_imgs))
+        train_valid_split = int(0.95*len(train_imgs))
         np.random.shuffle(train_imgs)
 
         valid_imgs = train_imgs[train_valid_split:]
         #train_imgs = train_imgs[:train_valid_split]
         train_imgs = train_imgs #use all images for training
 
-    config['model']['labels'] = sorted(list(train_labels))
-    print(config['model']['labels'])
 
     ###############################
     #   Construct the model 
@@ -61,8 +59,10 @@ def _main_():
 
     if os.path.exists(config['train']['pretrained_weights']):
         print("Loading pre-trained weights in", config['train']['pretrained_weights'])
-        yolo.load_weights(config['train']['pretrained_weights'])
-        #yolo.load_YOLO_official_weights(config['train']['pretrained_weights'])
+        if config['train']['pretrained_weights'].find('yolo.weights.h5') >0:
+            yolo.load_YOLO_official_weights(config['train']['pretrained_weights'])
+        else:
+             yolo.load_weights(config['train']['pretrained_weights'])
     ###############################
     #   Freeze layers
     ###############################
