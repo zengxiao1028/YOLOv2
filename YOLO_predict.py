@@ -14,7 +14,7 @@ from core.xiaofrontend import XiaoYOLO
 from sklearn.externals import joblib
 def _main_():
 
-    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_cap_1'
+    training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_cap_2'
     #training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_imagenetvid_7'
     #training_result_folder = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_caltech_2'
 
@@ -28,8 +28,8 @@ def _main_():
 
 
     #validation_model_path = os.path.join(training_result_folder,  'best_' + config['train']['saved_weights_name'] )
-    #validation_model_path = os.path.join(training_result_folder, config['train']['saved_weights_name'])
-    validation_model_path = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_cap_1/full_yolo_004.h5'
+    validation_model_path = os.path.join(training_result_folder, config['train']['saved_weights_name'])
+    #validation_model_path = '/home/xiao/video_project/YOLOv2/traning_results/YOLOv2_cap_2/full_yolo_004.h5'
 
 
 
@@ -90,7 +90,7 @@ def _main_():
     ###############################
 
     #video_inp = '/home/xiao/video_project/YOLOv2/dataset/caltech_pedestrian/data/plots/set07_V002.avi'
-    video_inp = '/home/xiao/Cap/videos/192.168.1.210-01-201507020917011.avi'
+    video_inp = '/home/xiao/Cap/videos/2.avi'
     video_out = './tmp/result.mp4'
 
     metadata = skvideo.io.ffprobe(video_inp)
@@ -104,7 +104,7 @@ def _main_():
         if idx%3==0:
             image = cv2.resize(image, (0, 0), fx=0.5, fy=0.5)
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-            boxes = yolo.predict(image, 0.55, 0.5, ['pass'])
+            boxes = yolo.predict(image, 0.3, 0.5,['pass'])
 
             image = draw_boxes(image, boxes, labels=sorted(list(config['model']['labels'])) )
 

@@ -46,12 +46,12 @@ def main():
     video_folder = '/home/xiao/Cap/videos'
     label_folder = '/home/xiao/Cap/self_label/video_label/video/results'
     save_folder = '/home/xiao/Cap/data/imgs'
-    video_files = os.listdir(video_folder)
+    video_files = ['1.avi','3.avi','4.mp4']
     imgs = []
     for file in video_files:
         if os.path.isdir(os.path.join(video_folder,file)):
             continue
-        gt_file = file[:-4] + '_gt.txt'
+        gt_file = file[:-4] + '.txt'
         gt_path = os.path.join(label_folder,gt_file)
         if not os.path.exists(gt_path):
             continue
@@ -65,11 +65,11 @@ def main():
 
         gt_dict = read_gt(gt_path)
 
-        img_save_folder = os.path.join(save_folder,file[17:-4])
+        img_save_folder = os.path.join(save_folder,file.split('.')[0])
         os.makedirs(img_save_folder,exist_ok=True)
         for idx,image in enumerate(videogen):
             img = cv2.cvtColor(image,cv2.COLOR_RGB2BGR)
-            if idx % 6 ==0 :
+            if idx % 3 ==0 :
                 print(idx)
                 if idx in gt_dict:
                     sample_dict = {}
@@ -84,9 +84,50 @@ def main():
     random.shuffle(imgs)
     labels = {'pass','fail'}
     joblib.dump((imgs,labels), './train.pkl')
+
+    video_files = ['2.avi']
+    imgs = []
+    for file in video_files:
+        if os.path.isdir(os.path.join(video_folder,file)):
+            continue
+        gt_file = file[:-4] + '.txt'
+        gt_path = os.path.join(label_folder,gt_file)
+        if not os.path.exists(gt_path):
+            continue
+        video_path = os.path.join(video_folder,file)
+
+
+        videogen = skvideo.io.vreader(video_path)
+
+        videodata = skvideo.io.ffprobe(video_path)
+        W , H = videodata['video']['@width'], videodata['video']['@height']
+
+        gt_dict = read_gt(gt_path)
+
+        img_save_folder = os.path.join(save_folder,file.split('.')[0])
+        os.makedirs(img_save_folder,exist_ok=True)
+        for idx,image in enumerate(videogen):
+            img = cv2.cvtColor(image,cv2.COLOR_RGB2BGR)
+            if idx % 3 ==0 :
+                print(idx)
+                if idx in gt_dict:
+                    sample_dict = {}
+                    filename = os.path.join(img_save_folder, str(idx) + '.jpg')
+                    sample_dict['filename'] = filename
+                    sample_dict['height'] = H
+                    sample_dict['width'] = W
+                    sample_dict['object'] = gt_dict[idx]
+                    cv2.imwrite(filename, img)
+                    imgs.append(sample_dict)
+
+    random.shuffle(imgs)
+    labels = {'pass','fail'}
+    joblib.dump((imgs,labels), './test.pkl')
     print(len(imgs))
 
 if __name__ == '__main__':
-    #main()
+    main()
     imgs,labels = joblib.load('./train.pkl')
+    print(len(imgs))
+    imgs, labels = joblib.load('./test.pkl')
     print(len(imgs))

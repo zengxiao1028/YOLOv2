@@ -12,7 +12,7 @@
         "train_image_folder":   "",
         "train_annot_folder":   "",
         "train_annot_file"  :   "/home/xiao/video_project/YOLOv2/dataset/cap_dataset/train.pkl",
-        "train_times":          5,
+        "train_times":          1,
         "pretrained_weights":   "./pretrain_models/yolo.weights.h5",
         "batch_size":           32,
         "learning_rate":        1e-4,
@@ -31,7 +31,7 @@
     "valid": {
         "valid_image_folder":   "",
         "valid_annot_folder":   "",
-        "valid_annot_file"  :   "",
+        "valid_annot_file"  :   "/home/xiao/video_project/YOLOv2/dataset/cap_dataset/test.pkl",
         "valid_times":          1,
         "obj_threshold"     :   0.3,
         "nms_threshold"     :   0.5

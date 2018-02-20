@@ -516,7 +516,7 @@ class YOLO(object):
                                   write_images=False)
 
         periodic_saver = PeriodicSaver(self.model.callback_model if nb_gpus >1 else self.model,
-                                       os.path.join(saved_dir, saved_weights_name)[:-3] + '_%03d.h5' ,N=5)
+                                       os.path.join(saved_dir, saved_weights_name)[:-3] + '_%03d.h5' ,N=1)
 
 
         ############################################
